@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class MMOUtils {
@@ -38,6 +39,19 @@ public class MMOUtils {
 
     public static boolean isColorable(@NotNull Particle particle) {
         return particle.getDataType() == Particle.DustOptions.class;
+    }
+
+    /**
+     * Catch exception with a more friendly error message
+     */
+    @NotNull
+    public static <T> T friendlyValueOf(Function<String, T> valueOfFunction, String input, String messageFormat) {
+        input = UtilityMethods.enumName(input);
+        try {
+            return valueOfFunction.apply(input);
+        } catch (Exception exception) {
+            throw new RuntimeException(String.format(messageFormat, input));
+        }
     }
 
     public static String[] trimString(int charactersPerLine, @NotNull String... inputs) {

@@ -21,6 +21,7 @@ public class ItemStats {
             SKULL_TEXTURE = new SkullTextureStat(),
             ITEM_DAMAGE = new ItemDamage(),
             CUSTOM_MODEL_DATA = new CustomModelData(),
+            MODEL = new ItemModel(),
             MAX_DURABILITY = new MaximumDurability(),
             MAX_ITEM_DAMAGE = new MaxItemDamage(),
             WILL_BREAK = new LostWhenBroken(),
@@ -215,6 +216,8 @@ public class ItemStats {
     // Unique Item Stats
     DYE_COLOR = new DyeColor(),
             HIDE_DYE = new HideDye(),
+            EQUIPPABLE_SLOT = new EquippableSlot(),
+            EQUIPPABLE_MODEL = new EquippableModel(),
             TRIM_MATERIAL = new TrimMaterialStat(),
             TRIM_PATTERN = new TrimPatternStat(),
             HIDE_ARMOR_TRIM = new HideTrim(),
