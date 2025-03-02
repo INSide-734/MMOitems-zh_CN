@@ -7,7 +7,6 @@ import io.lumine.mythic.lib.api.util.ui.QuickNumberRange;
 import io.lumine.mythic.lib.api.util.ui.SilentNumbers;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.util.MMOUtils;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.crafting.ConfigMMOItem;
 import net.Indyuce.mmoitems.api.crafting.ingredient.inventory.MMOItemPlayerIngredient;
@@ -53,11 +52,6 @@ public class MMOItemIngredient extends Ingredient<MMOItemPlayerIngredient> {
 
 	public MMOItemTemplate getTemplate() {
 		return template;
-	}
-
-	@Override
-	public String getKey() {
-		return "mmoitem:" + template.getType().getId().toLowerCase() + (level.hasMax() || level.hasMax() ? "-" + level.toString() : "") + "_" + template.getId().toLowerCase();
 	}
 
 	@Override
@@ -109,12 +103,16 @@ public class MMOItemIngredient extends Ingredient<MMOItemPlayerIngredient> {
 		return item;
 	}
 
-	@Override
-	public String toString() {
-		return getKey();
-	}
+    @Override
+    public String toString() {
+        return "MMOItemIngredient{" +
+                "type=" + template.getType().getName() +
+                ", id=" + template.getId()+
+                ", level=" + level +
+                '}';
+    }
 
-	private String findName() {
+    private String findName() {
 		String name;
 
 		// By default, take item display name

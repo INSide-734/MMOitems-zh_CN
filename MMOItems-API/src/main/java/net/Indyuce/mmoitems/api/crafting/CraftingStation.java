@@ -3,7 +3,6 @@ package net.Indyuce.mmoitems.api.crafting;
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.util.PostLoadAction;
 import io.lumine.mythic.lib.util.PreloadedObject;
-import io.lumine.mythic.lib.version.Sounds;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.crafting.ingredient.inventory.IngredientInventory;
 import net.Indyuce.mmoitems.api.crafting.recipe.CheckedRecipe;
@@ -13,7 +12,8 @@ import net.Indyuce.mmoitems.api.crafting.recipe.Recipe.RecipeOption;
 import net.Indyuce.mmoitems.api.crafting.recipe.UpgradingRecipe;
 import net.Indyuce.mmoitems.api.player.PlayerData;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Sound;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -23,23 +23,20 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class CraftingStation implements PreloadedObject {
-    private final String id;
-    private final String name;
-    private final Layout layout;
-    private final Sound sound;
-    private final StationItemOptions itemOptions;
+    private final String id, name;
     private final int maxQueueSize;
+    private final EditableCraftingStationView editableView;
+    private final EditableCraftingStationPreview editablePreview;
 
     /**
-     * This is not all the recipes of that crafting station. It only
-     * contains the recipes that are specific to that station, relative
-     * to the position of that station in the station inheritance tree.
-     * <p>
-     * In other words that map doesn't contain the crafting recipes of
-     * the parent crafting station saved in {@link #parent}
+     * This map only contains recipes which are specific to that station,
+     * it does not contain the recipes of its parent station (if it exists).
      */
     private final Map<String, Recipe> recipes = new LinkedHashMap<>();
 
+    /**
+     * A station inherits from the recipes of its parent station.
+     */
     private CraftingStation parent;
 
     private final PostLoadAction postLoadAction = new PostLoadAction(config -> {
@@ -51,38 +48,48 @@ public class CraftingStation implements PreloadedObject {
         parent = MMOItems.plugin.getCrafting().getStation(id);
     });
 
-    public CraftingStation(String id, FileConfiguration config) {
+    public CraftingStation(@NotNull String id, @NotNull FileConfiguration config) {
         postLoadAction.cacheConfig(config);
 
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.name = config.getString("name", "A Station With No Name");
-        this.layout = MMOItems.plugin.getLayouts().getLayout(config.getString("layout", "default"));
-        this.sound = Sounds.fromName(UtilityMethods.enumName(config.getString("sound", "ENTITY_EXPERIENCE_ORB_PICKUP")));
+        this.editableView = new EditableCraftingStationView(this);
+        this.editablePreview = new EditableCraftingStationPreview(this);
+
+        // Setup command if required
+        // A reload is required to flush older commands
+        if (config.contains("command"))
+            setupCommand(config.getConfigurationSection("command"));
+
+        editableView.reload(MMOItems.plugin, config.getConfigurationSection("gui-layout"));
+        if (config.isConfigurationSection("preview-gui-layout")) // Confirm GUI is now optional
+            editablePreview.reload(MMOItems.plugin, config.getConfigurationSection("preview-gui-layout"));
 
         for (String key : config.getConfigurationSection("recipes").getKeys(false))
             try {
                 registerRecipe(loadRecipe(config.getConfigurationSection("recipes." + key)));
-            } catch (IllegalArgumentException exception) {
+            } catch (RuntimeException exception) {
                 MMOItems.plugin.getLogger().log(Level.SEVERE,
-                        "An issue occurred registering recipe '" + key + "' from crafting station '" + id + "': " + exception.getMessage());
+                        "Could not load recipe '" + key + "' from crafting station '" + id + "': " + exception.getMessage());
             }
 
-        itemOptions = new StationItemOptions(config.getConfigurationSection("items"));
         maxQueueSize = Math.max(1, Math.min(config.getInt("max-queue-size"), 64));
     }
 
-    public CraftingStation(String id, String name, Layout layout, Sound sound, StationItemOptions itemOptions, int maxQueueSize, CraftingStation parent) {
+    public CraftingStation(String id, String name,
+                           int maxQueueSize,
+                           CraftingStation parent,
+                           EditableCraftingStationView editableView,
+                           EditableCraftingStationPreview editablePreview) {
         Validate.notNull(id, "Crafting station ID must not be null");
         Validate.notNull(name, "Crafting station name must not be null");
-        Validate.notNull(sound, "Crafting station sound must not be null");
 
         this.id = id.toLowerCase().replace("_", "-").replace(" ", "-");
         this.name = name;
-        this.layout = layout;
-        this.sound = sound;
-        this.itemOptions = itemOptions;
         this.maxQueueSize = maxQueueSize;
         this.parent = parent;
+        this.editableView = editableView;
+        this.editablePreview = editablePreview;
     }
 
     @NotNull
@@ -95,17 +102,28 @@ public class CraftingStation implements PreloadedObject {
         return id;
     }
 
-    @Deprecated
+    private void setupCommand(ConfigurationSection config) {
+        Validate.notNull(config, "Command config is null");
+
+        CommandMap commandMap = Bukkit.getServer().getCommandMap();
+        String name = Objects.requireNonNull(config.getString("name"), "Command name not found");
+
+        // Command already exists
+        if (commandMap.getCommand(name) != null) return;
+
+        commandMap.register(MMOItems.plugin.getName(), new CraftingStationCommand(this, name, config));
+    }
+
+    public EditableCraftingStationView getEditableView() {
+        return editableView;
+    }
+
+    public EditableCraftingStationPreview getEditablePreview() {
+        return editablePreview;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public Layout getLayout() {
-        return layout;
-    }
-
-    public Sound getSound() {
-        return sound;
     }
 
     @Nullable
@@ -115,8 +133,9 @@ public class CraftingStation implements PreloadedObject {
 
     /**
      * @return Recursively collects all recipes from that station and from
-     * its parent station.
+     *         its parent station.
      */
+    @NotNull
     public Collection<Recipe> getRecipes() {
         if (parent == null)
             return recipes.values();
@@ -144,6 +163,7 @@ public class CraftingStation implements PreloadedObject {
      * @param id Recipe identifier
      * @return Recursively finds the corresponding recipe
      */
+    @Nullable
     public Recipe getRecipe(String id) {
         Recipe found = recipes.get(id);
         return found == null && parent != null ? parent.getRecipe(id) : found;
@@ -166,24 +186,22 @@ public class CraftingStation implements PreloadedObject {
         return infos;
     }
 
-    public StationItemOptions getItemOptions() {
-        return itemOptions;
-    }
-
     /**
      * Keep in mind this method also has the effect of register a recipe
      * inside any crafting station that has the current station as child.
      *
      * @param recipe Recipe being registered
-     * @see {@link #hasRecipe(String)}
+     * @see #hasRecipe(String)
      */
     public void registerRecipe(Recipe recipe) {
         recipes.put(recipe.getId(), recipe);
     }
 
+    @Deprecated
     public int getMaxPage() {
         int recipes = getRecipes().size();
-        return Math.max(1, (int) Math.ceil((double) recipes / getLayout().getRecipeSlots().size()));
+        int perPage = Objects.requireNonNull(editableView.getByFunction("recipe"), "No item with function 'recipe'").getSlots().size();
+        return UtilityMethods.getPageNumber(recipes, perPage);
     }
 
     /*

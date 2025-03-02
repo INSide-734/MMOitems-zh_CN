@@ -1,6 +1,5 @@
 package net.Indyuce.mmoitems;
 
-import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import io.lumine.mythic.lib.api.util.ui.FriendlyFeedbackMessage;
 import io.lumine.mythic.lib.api.util.ui.FriendlyFeedbackProvider;
@@ -16,10 +15,7 @@ import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.Indyuce.mmoitems.api.util.MMOItemReforger;
 import net.Indyuce.mmoitems.api.util.message.FFPMMOItems;
 import net.Indyuce.mmoitems.command.MMOItemsCommandTreeRoot;
-import net.Indyuce.mmoitems.comp.MMOItemsMetrics;
-import net.Indyuce.mmoitems.comp.MMOItemsRewardTypes;
-import net.Indyuce.mmoitems.comp.McMMONonRPGHook;
-import net.Indyuce.mmoitems.comp.WorldEditSupport;
+import net.Indyuce.mmoitems.comp.*;
 import net.Indyuce.mmoitems.comp.eco.VaultSupport;
 import net.Indyuce.mmoitems.comp.enchants.CrazyEnchantsStat;
 import net.Indyuce.mmoitems.comp.enchants.EnchantPlugin;
@@ -35,7 +31,6 @@ import net.Indyuce.mmoitems.comp.rpg.DefaultHook;
 import net.Indyuce.mmoitems.comp.rpg.HeroesHook;
 import net.Indyuce.mmoitems.comp.rpg.McMMOHook;
 import net.Indyuce.mmoitems.comp.rpg.RPGHandler;
-import net.Indyuce.mmoitems.gui.PluginInventory;
 import net.Indyuce.mmoitems.gui.edition.recipe.RecipeTypeListGUI;
 import net.Indyuce.mmoitems.manager.*;
 import net.Indyuce.mmoitems.manager.data.PlayerDataManager;
@@ -49,7 +44,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +63,6 @@ public class MMOItems extends MMOPlugin {
     private final TemplateManager templateManager = new TemplateManager();
     private final SkillManager skillManager = new SkillManager();
     private final RecipeManager recipeManager = new RecipeManager();
-    private final LayoutManager layoutManager = new LayoutManager();
     private final TypeManager typeManager = new TypeManager();
     private final ItemManager itemManager = new ItemManager();
     private final PlayerInventoryHandler inventory = new PlayerInventoryHandler();
@@ -110,9 +103,9 @@ public class MMOItems extends MMOPlugin {
         getLogger().log(Level.INFO, "██║╚██╔╝██║██║╚██╔╝██║██║   ██║██║   ██║   ██╔══╝  ██║╚██╔╝██║╚════██║");
         getLogger().log(Level.INFO, "██║ ╚═╝ ██║██║ ╚═╝ ██║╚██████╔╝██║   ██║   ███████╗██║ ╚═╝ ██║███████║");
         getLogger().log(Level.INFO, "╚═╝     ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝   ╚═╝   ╚══════╝╚═╝     ╚═╝╚══════╝");
-        getLogger().log(Level.INFO, "INFO   Source: phoenix-dvpmt/mmoitems    VERSION: 6.10.1");
+        getLogger().log(Level.INFO, "INFO   Source: phoenix-dvpmt/mmoitems    VERSION: 6.10");
         getLogger().log(Level.INFO, "       QQ: 3217962725     文件: " + getFile().getName());
-        getLogger().log(Level.INFO, "       (此项目为开源免费项目，如果你付费购买此插件，恭喜你上当了！)");
+        getLogger().log(Level.INFO, "       (禁止倒卖)");
         
         PluginUtils.isDependencyPresent("WorldEdit", u -> {
             try {
@@ -169,6 +162,15 @@ public class MMOItems extends MMOPlugin {
             if (getConfig().getBoolean("lootsplosion.enabled"))
                 Bukkit.getPluginManager().registerEvents(new LootsplosionListener(), this);
         });
+        PluginUtils.hookDependencyIfPresent("ItemsAdder", true, unused -> {
+            new ItemsAdderCompatibility();
+        });
+        PluginUtils.hookDependencyIfPresent("Oraxen", true, unused -> {
+            new OraxenCompatibility();
+        });
+        PluginUtils.hookDependencyIfPresent("Nexo", true, unused -> {
+            new NexoCompatibility();
+        });
         PluginUtils.hookDependencyIfPresent("MMOInventory", true, unused -> new MMOInventorySupport());
 
         // This needs to be before modifier registration (MMOCore)
@@ -193,7 +195,6 @@ public class MMOItems extends MMOPlugin {
         PluginUtils.hookDependencyIfPresent("Vault", true, u -> vaultSupport = new VaultSupport());
 
         getLogger().log(Level.INFO, "正在加载制作站, 请稍候..");
-        layoutManager.reload();
         stationRecipeManager.reload();
 
         // This ones are not implementing Reloadable
@@ -278,9 +279,6 @@ public class MMOItems extends MMOPlugin {
         // Drop abandoned items
         DeathItemsHandler.getActive().forEach(DeathItemsHandler::dropItems);
 
-        // Close inventories
-        UtilityMethods.closeOpenViewsOfType(PluginInventory.class);
-
         // WorldGen
         this.worldGenManager.unload();
     }
@@ -295,10 +293,6 @@ public class MMOItems extends MMOPlugin {
 
     public CraftingManager getCrafting() {
         return stationRecipeManager;
-    }
-
-    public LayoutManager getLayouts() {
-        return layoutManager;
     }
 
     public SetManager getSets() {
@@ -375,7 +369,7 @@ public class MMOItems extends MMOPlugin {
 
         // Unregister old events
         if (getMainRPG() instanceof Listener && isEnabled())
-            HandlerList.unregisterAll((Plugin) getMainRPG());
+            HandlerList.unregisterAll((Listener) getMainRPG());
 
         rpgPlugins.add(0, handler);
         getLogger().log(Level.INFO, "正在使用 " + handler.getClass().getSimpleName() + " 作为 RPG 提供");

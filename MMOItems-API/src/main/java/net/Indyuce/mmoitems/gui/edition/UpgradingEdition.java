@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.api.util.AltChar;
 import io.lumine.mythic.lib.api.util.ItemFactory;
+import io.lumine.mythic.lib.gui.Navigator;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
@@ -23,8 +24,8 @@ import java.util.List;
 public class UpgradingEdition extends EditionInventory {
 	private static final ItemStack notAvailable = ItemFactory.of(Material.RED_STAINED_GLASS_PANE).name("&c不可用").build();
 
-	public UpgradingEdition(Player player, MMOItemTemplate template) {
-		super(player, template);
+	public UpgradingEdition(Navigator navigator, MMOItemTemplate template) {
+		super(navigator, template);
 	}
 
 	@Override

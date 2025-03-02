@@ -14,11 +14,11 @@ import java.util.function.Predicate;
  * <p>
  * See {@link PlayerIngredient} for more information.
  */
-public class IngredientType extends LoadedCraftingObject<Ingredient> {
+public class IngredientType<P extends PlayerIngredient> extends LoadedCraftingObject<Ingredient<P>> {
     private final Predicate<NBTItem> check;
-    private final Function<NBTItem, PlayerIngredient> readIngredient;
+    private final Function<NBTItem, P> readIngredient;
 
-    public IngredientType(String id, Function<MMOLineConfig, Ingredient> function, ConditionalDisplay display, Predicate<NBTItem> check, Function<NBTItem, PlayerIngredient> readIngredient) {
+    public IngredientType(String id, Function<MMOLineConfig, Ingredient<P>> function, ConditionalDisplay display, Predicate<NBTItem> check, Function<NBTItem, P> readIngredient) {
         super(id, function, display);
 
         this.check = check;
@@ -38,7 +38,7 @@ public class IngredientType extends LoadedCraftingObject<Ingredient> {
      *
      * @return
      */
-    public PlayerIngredient  readPlayerIngredient(NBTItem item) {
+    public P readPlayerIngredient(NBTItem item) {
         return readIngredient.apply(item);
     }
 }

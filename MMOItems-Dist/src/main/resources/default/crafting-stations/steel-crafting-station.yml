@@ -1,193 +1,278 @@
 # 禁止倒卖 汉化作者 INSide_734
 # QQ: 3217962725
+
 # Name which will be displayed
 # when opening the station
-name: 'Steel Crafting Station (#page#/#max#)'
+name: 'Steel Crafting Station'
 
-# The maximum amount of items in the crafting queue ie. the
+# The maximum amount of items in the crafting queue, ie the
 # max number of items players are able to craft simultaneously.
 # Must be between 1 and 64.
-max-queue-size: 10
-
-# The sound that plays whenever an action is
-# completed in the crafting station.
-# GET SOUND NAMES HERE:
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-sound: ENTITY_EXPERIENCE_ORB_PICKUP
-
-# This is how the gui looks. You can define your own
-# in crafting-stations/layouts by creating a new
-# file with the name of the file as the id.
-layout: default
-
-# Configure GUI items here
-items:
-    fill:
-        material: AIR
-    no-recipe:
-        material: GRAY_STAINED_GLASS_PANE
-        name: '&a没有配方'
-    no-queue-item:
-        material: GRAY_STAINED_GLASS_PANE
-        name: '&a没有物品在队列'
+max-queue-size: 20
 
 # Station recipes
 recipes:
-    steel-sword:
+  steel-sword:
     
-        # The item which the recipe gives
-        output:
-            type: SWORD
-            id: STEEL_SWORD
-            amount: 1
-        
-        # Time it takes to craft the item
-        crafting-time: 3
-        
-        # Recipe options
-        options:
-            output-item: true # Set to false to give no item
-            silent-craft: false # No sound when item is claimed
-            hide-when-locked: false # Hide in the GUI when conditions are not met
-        
-        # Conditions to unlock the recipe
-        conditions:
-        - level{level=5}
-        - permission{list="mmoitems.recipe.steel-sword,mmoitems.recipe.station.steel"}
-        
-        # Ingredients needed for the recipe
-        # Available properties: type, id, amount, display, level (optional)
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}
-        - vanilla{type=STICK,amount=2,display="Wooden Stick"}
-    steel-sword-upgrade:
-        item:
-            type: SWORD
-            id: STEEL_SWORD
-        conditions:
-        - level{level=5}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}
-    two-handed-steel-sword:
-        output:
-            type: GREATSWORD
-            id: TWO_HANDED_STEEL_SWORD
-            amount: 1
-        crafting-time: 10
-        conditions:
-        - level{level=8}
-        ingredients:
-        - mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}
-        - vanilla{type=STICK,amount=4,display="Wooden Stick"}
-    katana:
-        output:
-            type: SWORD
-            id: KATANA
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - level{level=15}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=6,display="Steel Ingot"}
-        - vanilla{type=IRON_INGOT,amount=2,display="Iron Ingot"}
-        - vanilla{type=STICK,amount=3,display="Wooden Stick"}
-    steel-helmet:
-        output:
-            type: ARMOR
-            id: STEEL_HELMET
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - level{level=8}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=6,display="Steel Ingot"}
-    steel-chestplate:
-        output:
-            type: ARMOR
-            id: STEEL_CHESTPLATE
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - level{level=8}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=9,display="Steel Ingot"}
-    steel-leggings:
-        output:
-            type: ARMOR
-            id: STEEL_LEGGINGS
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - level{level=8}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=8,display="Steel Ingot"}
-    steel-boots:
-        output:
-            type: ARMOR
-            id: STEEL_BOOTS
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - level{level=8}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=5,display="Steel Ingot"}
-    steel-ingot:
-        output:
-            type: MATERIAL
-            id: STEEL_INGOT
-            amount: 3
-        crafting-time: 2
-        ingredients:
-        - vanilla{type=IRON_INGOT,amount=4,display="Iron Ingot"}
-    steel-dagger:
-        output:
-            type: DAGGER
-            id: STEEL_DAGGER
-            amount: 1
-        crafting-time: 6
-        conditions:
-        - level{level=20}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}
-        - vanilla{type=STICK,amount=2,display="Wooden Stick"}
-    hardened-steel-claymore:
-        output:
-            type: GREATSWORD
-            id: HARDENED_STEEL_CLAYMORE
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - level{level=13}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=15,display="Steel Ingot"}
-        - vanilla{type=STICK,amount=4,display="Wooden Stick"}
-    stiff-greatstaff:
-        output:
-            type: GREATSTAFF
-            id: STIFF_GREATSTAFF
-            amount: 1
-        conditions:
-        - level{level=6}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}
-        - vanilla{type=STICK,amount=10,display="Wooden Stick"}
-    steel-pickaxe:
-        output:
-            type: TOOL
-            id: STEEL_PICKAXE
-            amount: 1
-        conditions:
-        - level{level=6}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}
-        - vanilla{type=STICK,amount=3,display="Wooden Stick"}
-    steel-shovel:
-        output:
-            type: TOOL
-            id: STEEL_SHOVEL
-            amount: 1
-        conditions:
-        - level{level=6}
-        ingredients:
-        - mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=2,display="Steel Ingot"}
-        - vanilla{type=STICK,amount=3,display="Wooden Stick"}
+    # The item which the recipe gives
+    output: 'mmoitems{type=SWORD,id=STEEL_SWORD}'
+
+    # Time it takes to craft the item
+    crafting-time: 3
+
+    # Recipe options
+    options:
+      output-item: true # Set to false to give no item
+      silent-craft: false # No sound when item is claimed
+      hide-when-locked: false # Hide in the GUI when conditions are not met
+
+    # Conditions to unlock the recipe
+    conditions:
+      - 'level{level=5}'
+      - 'permission{list="mmoitems.recipe.steel-sword,mmoitems.recipe.station.steel"}'
+
+    # Ingredients needed for the recipe
+    # Available properties: type, id, amount, display, level (optional)
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
+      - 'vanilla{type=STICK,amount=2,display="Wooden Stick"}'
+  steel-sword-upgrade:
+    output: 'mmoitems{type=SWORD,id=STEEL_SWORD}'
+    conditions:
+      - 'level{level=5}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
+  two-handed-steel-sword:
+    output: 'mmoitems{type=GREATSWORD,id=TWO_HANDED_STEEL_SWORD}'
+    crafting-time: 10
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}'
+      - 'vanilla{type=STICK,amount=4,display="Wooden Stick"}'
+  katana:
+    output: 'mmoitems{type=SWORD,id=KATANA}'
+    crafting-time: 20
+    conditions:
+      - level{level=15}
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=6,display="Steel Ingot"}'
+      - 'vanilla{type=IRON_INGOT,amount=2,display="Iron Ingot"}'
+      - 'vanilla{type=STICK,amount=3,display="Wooden Stick"}'
+  steel-helmet:
+    output: 'mmoitems{type=ARMOR,id=STEEL_HELMET}'
+    crafting-time: 7
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=6,display="Steel Ingot"}'
+  steel-chestplate:
+    output: 'mmoitems{type=ARMOR,id=STEEL_CHESTPLATE}'
+    crafting-time: 7
+    conditions:
+      - level{level=8}
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=9,display="Steel Ingot"}'
+  steel-leggings:
+    output: 'mmoitems{type=ARMOR,id=STEEL_LEGGINGS}'
+    crafting-time: 7
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=8,display="Steel Ingot"}'
+  steel-boots:
+    output: 'mmoitems{type=ARMOR,id=STEEL_BOOTS}'
+    crafting-time: 7
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=5,display="Steel Ingot"}'
+  steel-ingot:
+    output: 'mmoitems{type=MATERIAL,id=STEEL_INGOT,amount=3}'
+    crafting-time: 2
+    ingredients:
+      - 'vanilla{type=IRON_INGOT,amount=4,display="Iron Ingot"}'
+  steel-dagger:
+    output: 'mmoitems{type=DAGGER,id=STEEL_DAGGER}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
+      - 'vanilla{type=STICK,amount=2,display="Wooden Stick"}'
+  hardened-steel-claymore:
+    output: 'mmoitems{type=GREATSWORD,id=HARDENED_STEEL_CLAYMORE}'
+    crafting-time: 20
+    conditions:
+      - 'level{level=13}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=15,display="Steel Ingot"}'
+      - 'vanilla{type=STICK,amount=4,display="Wooden Stick"}'
+  stiff-greatstaff:
+    output: 'mmoitems{type=GREATSTAFF,id=STIFF_GREATSTAFF}'
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
+      - 'vanilla{type=STICK,amount=10,display="Wooden Stick"}'
+  steel-pickaxe:
+    output: 'mmoitems{type=TOOL,id=STEEL_PICKAXE}'
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
+      - 'vanilla{type=STICK,amount=3,display="Wooden Stick"}'
+  steel-shovel:
+    output: 'mmoitems{type=TOOL,id=STEEL_SHOVEL}'
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=2,display="Steel Ingot"}'
+      - 'vanilla{type=STICK,amount=3,display="Wooden Stick"}'
+
+gui-layout:
+  # GUI display name
+  name: 'Steel Crafting Station ({page}/{max_page})'
+
+  # Number of slots in your inventory. Must be
+  # between 9 and 54 and must be a multiple of 9.
+  slots: 54
+
+  # When enabled, players can right click recipes to
+  # open a different UI (see below for configurating this UI)
+  # showing all ingredients required as well as the item
+  # being crafted/upgrading. This is referred as the "preview" GUI.
+  enable_right_click_preview: true
+
+  # Sounds performed on specific actions.
+  sound:
+    craft: ENTITY_EXPERIENCE_ORB_PICKUP
+    upgrade: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_cancel: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_claim: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_add: ENTITY_EXPERIENCE_ORB_PICKUP
+
+  items:
+
+    # Next/Previous page
+    previous_page:
+      item: PLAYER_HEAD
+      name: '&6Previous Page'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+      slots: [ 9 ]
+    next_page:
+      item: PLAYER_HEAD
+      name: '&6Next Page'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
+      slots: [ 17 ]
+
+    # Items relative to crafting queue
+    previous_queue_item:
+      item: PLAYER_HEAD
+      function: previous_queue_item
+      name: '&6Previous Item'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+    next_queue_item:
+      item: PLAYER_HEAD
+      name: '&6Next Item'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19'
+
+    queued_item:
+      slots: [ 38, 39, 40, 41, 42 ]
+
+      existing:
+        name: '&6&lQueue&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oThis item was successfully crafted.'
+          - '{queue}&7&oThis item is in the crafting queue.'
+          - '{queue}'
+          - '{queue}&7Time Left: &c{time_left}'
+          - ''
+          - '{ready}&e► Click to claim!'
+          - '{queue}&e► Click to cancel'
+
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&6No Item In Queue'
+
+    recipe:
+      function: recipe
+      slots: [ 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25 ]
+      delay_format: 'smhdMy'
+
+      # How a crafting recipe is displayed
+      craft:
+        name: '&a&lCraft&f {name}'
+        name_multiple: '&a&lCraft&f {amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Conditions:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Crafting Time: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Ingredients:'
+          - '{lore}'
+          - ''
+          - '&e► Left click to craft!'
+          - '&e► Right click to preview!'
+
+      # How an upgrading recipe is displayed
+      upgrade:
+        name: '&e&lUpgrade&f {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Conditions:'
+          - '{ingredients}'
+          - '{ingredients}&8Ingredients:'
+          - '{lore}'
+          - ''
+          - '&e► Left click to upgrade!'
+          - '&e► Right click to preview!'
+
+      # When no recipe exists
+      none:
+        item: GRAY_STAINED_GLASS_PANE # Can be set to AIR
+        name: '&6No Recipe'
+
+# You can fully delete this config section if you toggled off the option
+# `enable_right_click_preview` in the previous UI layout configuration.
+preview-gui-layout:
+  name: 'Preview'
+  slots: 45
+  items:
+
+    # Some border surrounding the ingredients (purely cosmetic)
+    cosmetic_border:
+      item: GRAY_STAINED_GLASS_PANE
+      name: '&6'
+      slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 17, 18, 19, 20, 24, 25, 26, 27, 29, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44 ]
+
+    # Confirm/Back buttons
+    confirm:
+      item: EMERALD
+      name: '&6Confirm'
+      slots: [ 34 ]
+    back:
+      item: PLAYER_HEAD
+      name: '&6Back'
+      slots: [ 10 ]
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+
+    # Preview item being crafted/upgraded
+    preview_output:
+      slots: [ 16 ]
+
+    # Show the recipe
+    recipe:
+      slots: [ 28 ]
+      material: KNOWLEDGE_BOOK # Optional. Item type will not be replaced if this line is commented out.
+      remove_lore_lines: 3 # Amount of lines to strip off the item lore
+
+    # Items being processed
+    ingredient:
+      slots: [ 12, 13, 14, 21, 22, 23, 30, 31, 32 ]
+
+      # When no ingredient
+      none:
+        material: AIR

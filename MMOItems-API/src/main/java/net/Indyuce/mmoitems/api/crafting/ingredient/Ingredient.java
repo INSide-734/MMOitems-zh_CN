@@ -15,27 +15,31 @@ import org.jetbrains.annotations.NotNull;
  * See {@link PlayerIngredient} for more information.
  */
 public abstract class Ingredient<C extends PlayerIngredient> {
-	private final String id;
+	private final String prefix;
 	private int amount;
 
 	public Ingredient(String id, MMOLineConfig config) {
 		this(id, config.getInt("amount", 1));
 	}
 
-	public Ingredient(String id, int amount) {
-		this.id = id;
+	public Ingredient(String prefix, int amount) {
+		this.prefix = prefix;
 		this.amount = amount;
 	}
 
 	/**
 	 * @return The ingredient type id i.e the string placed
-	 * at the beginning of the line config
+	 *         at the beginning of the line config
 	 */
-	public String getId() {
-		return id;
+	public String getPrefix() {
+		return prefix;
 	}
 
-	public void setAmount(int amount) { this.amount = amount; }
+	@Deprecated
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
 	public int getAmount() {
 		return amount;
 	}
@@ -45,16 +49,8 @@ public abstract class Ingredient<C extends PlayerIngredient> {
 	 * lookup error if the ingredient has not been registered.
 	 */
 	public ConditionalDisplay getDisplay() {
-		return MMOItems.plugin.getCrafting().getIngredients().stream().filter(type -> type.getId().equals(id)).findAny().orElseThrow().getDisplay();
+		return MMOItems.plugin.getCrafting().getIngredients().stream().filter(type -> type.getId().equals(prefix)).findAny().orElseThrow().getDisplay();
 	}
-
-	/**
-	 * @return The ingredient key which is used internally by MMOItems to check
-	 * if two ingredients are of the same nature.
-	 * @deprecated Apart from ingredient type keys, keys are not used anymore.
-	 */
-	@Deprecated
-	public abstract String getKey();
 
 	/**
 	 * Apply specific placeholders to display the ingredient in the item lore.

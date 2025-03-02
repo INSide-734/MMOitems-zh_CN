@@ -345,3 +345,15 @@ gem-upgrade-default: 'NEVER'
 
 # 这个选项允许你禁用使用从配置中移除的MMOItems。
 disable-removed-items: true
+
+# Default pickaxe power depending on the item material (for custom blocks only).
+# Pickaxe power does not apply to vanilla blocks, only those from MMOItems.
+# You may add/remove as many materials as you want in this list.
+default-pickaxe-power:
+    WOODEN_PICKAXE: 5
+    STONE_PICKAXE: 10
+    GOLDEN_PICKAXE: 15
+    IRON_PICKAXE: 20
+    DIAMOND_PICKAXE: 25
+    NETHERITE_PICKAXE: 30
+    # Add as many as you want.

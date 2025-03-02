@@ -1,9 +1,9 @@
 package net.Indyuce.mmoitems.api.edition;
 
 import io.lumine.mythic.lib.api.util.ui.FriendlyFeedbackCategory;
+import io.lumine.mythic.lib.gui.PluginInventory;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.edition.input.ChatEdition;
-import net.Indyuce.mmoitems.gui.PluginInventory;
 import net.Indyuce.mmoitems.gui.edition.EditionInventory;
 import net.Indyuce.mmoitems.stat.type.ItemStat;
 import org.bukkit.ChatColor;

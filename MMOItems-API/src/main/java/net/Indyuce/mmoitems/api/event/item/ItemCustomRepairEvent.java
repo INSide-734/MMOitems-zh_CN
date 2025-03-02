@@ -1,6 +1,6 @@
 package net.Indyuce.mmoitems.api.event.item;
 
-import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
+import net.Indyuce.mmoitems.api.interaction.util.CustomDurabilityItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
 public class ItemCustomRepairEvent extends Event implements Cancellable {
 
     @NotNull
-    private final DurabilityItem sourceItem;
+    private final CustomDurabilityItem sourceItem;
     private final int durabilityIncrease;
 
     private boolean cancelled;
 
     private static final HandlerList handlers = new HandlerList();
 
-    public ItemCustomRepairEvent(@NotNull DurabilityItem item, int impendingRepair) {
+    public ItemCustomRepairEvent(@NotNull CustomDurabilityItem item, int impendingRepair) {
         sourceItem = item;
         durabilityIncrease = impendingRepair;
     }
@@ -42,7 +42,7 @@ public class ItemCustomRepairEvent extends Event implements Cancellable {
     }
 
     @NotNull
-    public DurabilityItem getSourceItem() {
+    public CustomDurabilityItem getSourceItem() {
         return sourceItem;
     }
 

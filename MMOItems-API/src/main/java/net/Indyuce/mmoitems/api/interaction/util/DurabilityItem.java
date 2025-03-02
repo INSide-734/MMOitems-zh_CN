@@ -6,249 +6,256 @@ import io.lumine.mythic.lib.api.item.NBTItem;
 import io.lumine.mythic.lib.api.item.SupportedNBTTagValues;
 import io.lumine.mythic.lib.gson.JsonParser;
 import io.lumine.mythic.lib.gson.JsonSyntaxException;
+import io.lumine.mythic.lib.util.lang3.Validate;
 import io.lumine.mythic.lib.version.Sounds;
 import io.lumine.mythic.lib.version.VEnchantment;
 import net.Indyuce.mmoitems.ItemStats;
-import net.Indyuce.mmoitems.api.event.item.CustomDurabilityDamage;
-import net.Indyuce.mmoitems.api.event.item.ItemCustomRepairEvent;
 import net.Indyuce.mmoitems.api.item.mmoitem.LiveMMOItem;
-import net.Indyuce.mmoitems.api.item.util.LoreUpdate;
 import net.Indyuce.mmoitems.api.player.PlayerData;
-import net.Indyuce.mmoitems.stat.data.DoubleData;
 import net.Indyuce.mmoitems.stat.data.UpgradeData;
 import net.Indyuce.mmoitems.util.MMOUtils;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Random;
 
 /**
- * Class which handles custom durability; you can add or remove
- * some durability from an item and generate the new version.
- * <p>
- * This does update the item lore dynamically. However due to the current
- * implementation of {@link LoreUpdate}, if other plugins edit the line
- * corresponding to durability, MMOItems won't be able to detect it again.
+ * Handles durability decreasing logic for both vanilla and MMOItems custom
+ * durability systems in an interface friendly way. See inheritors of this
+ * class to check how custom and vanilla durability are handled respectively.
  *
- * @author indyuce
+ * @author jules
  */
-public class DurabilityItem {
-    private final NBTItem nbtItem;
-    private final int maxDurability, unbreakingLevel, initialDurability;
-    private final boolean barHidden;
-    private final Player player;
+public abstract class DurabilityItem {
+    protected final ItemStack item;
+    protected final NBTItem nbtItem;
+    @Nullable
+    protected final Player player;
+    @Nullable
+    protected final EquipmentSlot slot;
+    private final int unbreakingLevel;
 
-    private int durability;
+    @Nullable
+    private ItemStack itemOutput;
 
-    private static final Random RANDOM = new Random();
+    protected static final Random RANDOM = new Random();
 
-    /**
-     * Use to handle durability changes for MMOItems
-     * without using heavy MMOItem class methods.
-     *
-     * @param player Player holding the item
-     * @param item   Item with durability
-     */
-    public DurabilityItem(@NotNull Player player, @NotNull ItemStack item) {
-        this(player, NBTItem.get(item));
+    protected DurabilityItem(@Nullable Player player, @NotNull NBTItem nbtItem, @Nullable EquipmentSlot slot) {
+        this.nbtItem = nbtItem;
+        this.item = nbtItem.getItem();
+        this.player = player;
+        this.slot = slot;
+
+        this.unbreakingLevel = MMOUtils.getLevel(nbtItem.getItem(), VEnchantment.UNBREAKING.get());
     }
 
-    /**
-     * Use to handle durability changes for MMOItems
-     * without using heavy MMOItem class methods
-     *
-     * @param player  Player holding the item
-     * @param nbtItem Item with durability
-     */
-    public DurabilityItem(@NotNull Player player, @NotNull NBTItem nbtItem) {
-        this.player = Objects.requireNonNull(player, "Player cannot be null");
-        this.nbtItem = Objects.requireNonNull(nbtItem, "Item cannot be null");
-
-        maxDurability = nbtItem.getInteger("MMOITEMS_MAX_DURABILITY");
-        initialDurability = durability = nbtItem.hasTag("MMOITEMS_DURABILITY") ? nbtItem.getInteger("MMOITEMS_DURABILITY") : maxDurability;
-        barHidden = nbtItem.getBoolean("MMOITEMS_DURABILITY_BAR");
-
-        unbreakingLevel = MMOUtils.getLevel(nbtItem.getItem(), VEnchantment.UNBREAKING.get());
-    }
-
+    @Nullable
     public Player getPlayer() {
         return player;
     }
 
-    public int getMaxDurability() {
-        return maxDurability;
-    }
-
-    public int getDurability() {
-        return durability;
-    }
-
-    public boolean isBarHidden() {
-        return barHidden;
-    }
-
-    public int getUnbreakingLevel() {
-        return unbreakingLevel;
-    }
-
+    @NotNull
     public NBTItem getNBTItem() {
         return nbtItem;
     }
 
-    /**
-     * @return If both this is a VALID custom durability item and if the item is broken.
-     *         This will return <code>false</code> if it is not a valid item
-     */
-    public boolean isBroken() {
-        return maxDurability > 0 && durability <= 0;
-    }
-
-    public boolean isLostWhenBroken() {
-        return nbtItem.getBoolean("MMOITEMS_WILL_BREAK");
-    }
-
-    public boolean isDowngradedWhenBroken() {
-        return nbtItem.getBoolean("MMOITEMS_BREAK_DOWNGRADE");
-    }
-
-    /**
-     * @return If the item actually supports custom durability. It is completely
-     *         disabled when the player is in creative mode just like vanilla durability.
-     */
-    public boolean isValid() {
-        return maxDurability > 0 && player.getGameMode() != GameMode.CREATIVE;
-    }
-
     @NotNull
     public DurabilityItem addDurability(int gain) {
-        Validate.isTrue(gain > 0, "Durability gain must be greater than 0");
+        Validate.isTrue(itemOutput == null, "Item already generated");
 
-        ItemCustomRepairEvent event = new ItemCustomRepairEvent(this, gain);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return this;
-
-        durability = Math.min(durability + gain, maxDurability);
+        if (gain > 0) onDurabilityAdd(gain);
         return this;
     }
 
+    @NotNull
     public DurabilityItem decreaseDurability(int loss) {
+        Validate.isTrue(itemOutput == null, "Item already generated");
 
         // This happens when Unbreaking applies for a damageable item
-        if (loss == 0)
-            return this;
+        if (loss == 0) return this;
 
         /*
          * Calculate the chance of the item not losing any durability because of
          * the vanilla unbreaking enchantment ; an item with unbreaking X has 1
          * 1 chance out of (X + 1) to lose a durability point, that's 50% chance
          * -> 33% chance -> 25% chance -> 20% chance...
-         *
-         * This should only be taken into account if the item being damaged is
-         * UNDAMAGEABLE since Bukkit already applies the enchant for damageable items.
          */
-        if (nbtItem.getItem().getType().getMaxDurability() == 0) {
-            final int unbreakingLevel = getUnbreakingLevel();
-            if (unbreakingLevel > 0 && RANDOM.nextInt(unbreakingLevel + 1) != 0)
-                return this;
+        if (rollUnbreaking()) return this;
+
+        // Apply durability decrease
+        onDurabilityDecrease(loss);
+
+        return this;
+    }
+
+    @Nullable
+    public ItemStack toItem() {
+
+        // Cache result
+        if (itemOutput != null) return itemOutput;
+
+        if (isBroken()) {
+
+            // Lost when broken
+            if (isLostWhenBroken()) {
+
+                // Play sound when item breaks
+                if (player != null) {
+                    player.getWorld().playSound(player.getLocation(), Sounds.ENTITY_ITEM_BREAK, 1, 1);
+                    PlayerData.get(player).getInventory().scheduleUpdate();
+                }
+
+                return itemOutput = null;
+            }
+
+            // Checks for possible downgrade
+            if (isDowngradedWhenBroken()) {
+                ItemTag uTag = ItemTag.getTagAtPath(ItemStats.UPGRADE.getNBTPath(), getNBTItem(), SupportedNBTTagValues.STRING);
+                if (uTag != null) try {
+                    UpgradeData data = new UpgradeData(JsonParser.parseString((String) uTag.getValue()).getAsJsonObject());
+
+                    // If it cannot be downgraded (reached min), DEATH
+                    if (data.getLevel() <= data.getMin()) return null;
+
+                    // Downgrade and FULLY repair item
+                    LiveMMOItem mmo = new LiveMMOItem(getNBTItem());
+                    //mmo.setData(ItemStats.CUSTOM_DURABILITY, new DoubleData(maxDurability));
+                    mmo.getUpgradeTemplate().upgradeTo(mmo, data.getLevel() - 1);
+                    NBTItem nbtItem = mmo.newBuilder().buildNBT();
+
+                    // Fully repair item
+                    DurabilityItem item = DurabilityItem.from(player, nbtItem);
+                    Validate.notNull(item, "Internal error");
+                    item.addDurability(item.getMaxDurability());
+
+                    // Return
+                    return itemOutput = item.toItem();
+
+                } catch (JsonSyntaxException | IllegalStateException ignored) {
+                    // Nothing
+                }
+            }
         }
 
-        CustomDurabilityDamage event = new CustomDurabilityDamage(this, loss);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return this;
+        return itemOutput = applyChanges();
+    }
 
-        durability = Math.max(0, Math.min(durability - loss, maxDurability));
+    public boolean isLostWhenBroken() {
+        return nbtItem.getBoolean("MMOITEMS_WILL_BREAK");
+    }
 
-        // Play sound when item breaks
-        if (isBroken()) {
-            player.getWorld().playSound(player.getLocation(), Sounds.ENTITY_ITEM_BREAK, 1, 1);
-            PlayerData.get(player).getInventory().scheduleUpdate();
+    private boolean isDowngradedWhenBroken() {
+        return nbtItem.getBoolean("MMOITEMS_BREAK_DOWNGRADE");
+    }
+
+    @NotNull
+    protected abstract ItemStack applyChanges();
+
+    public abstract boolean isBroken();
+
+    public abstract int getDurability();
+
+    public abstract int getMaxDurability();
+
+    public abstract void onDurabilityAdd(int gain);
+
+    public abstract void onDurabilityDecrease(int loss);
+
+    @NotNull
+    public DurabilityItem updateInInventory() {
+        ItemStack resultingItem = toItem();
+
+        // No player is provided, just update the item and inshallah
+        if (player == null || slot == null) {
+            Validate.notNull(resultingItem, "Null item, no slot/player provided");
+            this.item.setItemMeta(resultingItem.getItemMeta());
+        }
+
+        // Place item
+        else {
+            player.getInventory().setItem(slot, resultingItem);
         }
 
         return this;
     }
 
-    /**
-     * This method not only generates the newest item version taking into account
-     * 1) item damage
-     * 2) item breaking
-     * 3) item downgrade
-     *
-     * @return Newest version of the damaged item.
-     *         <code>null</code> if the item breaks. That method CANNOT
-     *         return a null value if the item has no decreased its durability.
-     */
+    private boolean rollUnbreaking() {
+        return unbreakingLevel > 0 && RANDOM.nextInt(unbreakingLevel + 1) != 0;
+    }
+
+    protected int retrieveMaxVanillaDurability(@NotNull ItemStack item, @NotNull ItemMeta meta) {
+        if (MythicLib.plugin.getVersion().isAbove(1, 20, 5) && meta instanceof Damageable && ((Damageable) meta).hasMaxDamage()) {
+            int maxDamage = ((Damageable) meta).getMaxDamage();
+            if (maxDamage > 0) return maxDamage;
+        }
+        return item.getType().getMaxDurability();
+    }
+
     @Nullable
-    public ItemStack toItem() {
+    public static DurabilityItem vanilla(@Nullable Player player, @NotNull ItemStack item) {
+        try {
+            return new VanillaDurabilityItem(player, NBTItem.get(item), null);
+        } catch(Throwable ignored) {
+            return null;
+        }
+    }
 
-        if (isBroken()) {
+    @Nullable
+    public static DurabilityItem custom(@Nullable Player player, @NotNull ItemStack item) {
+        return custom(player, null, item);
+    }
 
-            // Lost when broken
-            if (isLostWhenBroken())
-                return null;
+    @Nullable
+    public static DurabilityItem custom(@Nullable Player player, @Nullable EquipmentSlot slot, @NotNull ItemStack item) {
+        NBTItem nbtItem = NBTItem.get(item);
+        return nbtItem.hasTag(ItemStats.MAX_DURABILITY.getNBTPath()) ? new CustomDurabilityItem(player, nbtItem, slot) : null;
+    }
 
-            // Checks for possible downgrade
-            if (isDowngradedWhenBroken()) {
-                ItemTag uTag = ItemTag.getTagAtPath(ItemStats.UPGRADE.getNBTPath(), getNBTItem(), SupportedNBTTagValues.STRING);
-                if (uTag != null)
-                    try {
-                        UpgradeData data = new UpgradeData(new JsonParser().parse((String) uTag.getValue()).getAsJsonObject());
+    @Nullable
+    public static DurabilityItem from(@Nullable Player player, @NotNull ItemStack item) {
+        return from(player, item, null, null);
+    }
 
-                        // If it cannot be downgraded (reached min), DEATH
-                        if (data.getLevel() <= data.getMin())
-                            return null;
+    @Nullable
+    public static DurabilityItem from(@Nullable Player player, @NotNull NBTItem item) {
+        return from(player, item.getItem(), item, null);
+    }
 
-                        // Remove one level and FULLY repair item
-                        LiveMMOItem mmo = new LiveMMOItem(getNBTItem());
-                        mmo.setData(ItemStats.CUSTOM_DURABILITY, new DoubleData(maxDurability));
-                        mmo.getUpgradeTemplate().upgradeTo(mmo, data.getLevel() - 1);
-                        return mmo.newBuilder().buildNBT().toItem();
+    @Nullable
+    public static DurabilityItem from(@Nullable Player player, @NotNull NBTItem item, @Nullable EquipmentSlot slot) {
+        return from(player, item.getItem(), item, slot);
+    }
 
-                    } catch (JsonSyntaxException | IllegalStateException ignored) {
-                        // Nothing
-                    }
-            }
+    @Nullable
+    public static DurabilityItem from(@Nullable Player player, @NotNull ItemStack item, @Nullable EquipmentSlot slot) {
+        return from(player, item, null, slot);
+    }
+
+    @Nullable
+    public static DurabilityItem from(@Nullable Player player, @NotNull ItemStack item, @Nullable NBTItem nbtItem, @Nullable EquipmentSlot slot) {
+
+        // No durability applied in creative mode
+        if (player != null && player.getGameMode() == GameMode.CREATIVE) return null;
+
+        if (nbtItem == null) nbtItem = NBTItem.get(item);
+
+        // Check for custom durability
+        if (nbtItem.hasTag(ItemStats.MAX_DURABILITY.getNBTPath()))
+            return new CustomDurabilityItem(player, nbtItem, slot);
+
+        // Try vanilla durability item
+        try {
+            return new VanillaDurabilityItem(player, nbtItem, slot);
+        } catch (Exception exception) {
+            // No max durability
         }
 
-        // No modification needs to be done
-        if (durability == initialDurability)
-            return nbtItem.getItem();
-
-        nbtItem.addTag(new ItemTag("MMOITEMS_DURABILITY", durability));
-
-        // Apply the NBT tags
-        ItemStack item = nbtItem.toItem();
-
-        /*
-         * Cross multiplication to display the current item durability on the
-         * item durability bar. (1 - ratio) because minecraft works with item
-         * damage, and item damage is the complementary of the remaining
-         * durability.
-         *
-         * Make sure the vanilla bar displays at least 1 damage for display
-         * issues. Also makes sure the item can be mended using the vanilla
-         * enchant.
-         */
-        if (!barHidden && item.getType().getMaxDurability() > 0) {
-            final int damage = (durability == maxDurability) ? 0 : Math.max(1, (int) ((1. - ((double) durability / maxDurability)) * nbtItem.getItem().getType().getMaxDurability()));
-            final ItemMeta meta = item.getItemMeta();
-            ((Damageable) meta).setDamage(damage);
-            item.setItemMeta(meta);
-        }
-
-        // Item lore update
-        final String format = MythicLib.inst().parseColors(ItemStats.ITEM_DAMAGE.getGeneralStatFormat().replace("{max}", String.valueOf(maxDurability)));
-        final String old = format.replace("{current}", String.valueOf(initialDurability));
-        final String replaced = format.replace("{current}", String.valueOf(durability));
-        return new LoreUpdate(item, old, replaced).updateLore();
+        return null;
     }
 }

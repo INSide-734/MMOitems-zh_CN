@@ -55,13 +55,13 @@ public class RepairPower extends DoubleStat implements ConsumableItemInteraction
         }
 
         // Custom durability
-        final boolean customDurability = target.hasTag("MMOITEMS_DURABILITY");
-        if (customDurability) {
-            final DurabilityItem durItem = new DurabilityItem(player, target);
+        final DurabilityItem durItem = DurabilityItem.from(player, target);
+        if (durItem != null) {
             if (durItem.getDurability() >= durItem.getMaxDurability()) return false;
 
             final int repairPower = repairAmountSupplier.apply(durItem);
-            target.getItem().setItemMeta(durItem.addDurability(repairPower).toItem().getItemMeta());
+            durItem.addDurability(repairPower);
+            durItem.updateInInventory();
             Message.REPAIRED_ITEM
                     .format(ChatColor.YELLOW, "#item#", MMOUtils.getDisplayName(target.getItem()), "#amount#", String.valueOf(repairPower))
                     .send(player);

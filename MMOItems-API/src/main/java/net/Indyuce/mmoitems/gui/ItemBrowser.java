@@ -4,37 +4,33 @@ import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import io.lumine.mythic.lib.api.util.AltChar;
 import io.lumine.mythic.lib.api.util.ui.SilentNumbers;
-import io.lumine.mythic.lib.util.AdventureUtils;
+import io.lumine.mythic.lib.gui.Navigator;
 import io.lumine.mythic.lib.version.Sounds;
-import io.lumine.mythic.lib.version.VersionUtils;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.edition.NewItemEdition;
 import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
+import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.Indyuce.mmoitems.gui.edition.ItemEdition;
 import net.Indyuce.mmoitems.stat.BrowserDisplayIDX;
 import net.Indyuce.mmoitems.util.MMOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class ItemBrowser extends PluginInventory {
+public class ItemBrowser extends MMOItemsInventory {
     private final Map<String, ItemStack> cached = new LinkedHashMap<>();
-    private final List<Type> itemTypes;
 
+    @NotNull
     private final Type type;
     private boolean deleteMode;
 
@@ -42,104 +38,20 @@ public class ItemBrowser extends PluginInventory {
     private static final int[] slots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
     private static final int[] slotsAlt = {1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
 
-    private static final String CUSTOM_RP_DOWNLOAD_LINK = "https://www.dropbox.com/s/90w9pvdbfeyxu94/MICustomBlockPack.zip?dl=1";
-    private static final NamespacedKey TYPE_ID_KEY = new NamespacedKey(MMOItems.plugin, "TypeId");
-
-    public ItemBrowser(Player player) {
-        this(player, null);
-    }
-
-    public ItemBrowser(Player player, Type type) {
-        super(player);
+    public ItemBrowser(Navigator navigator, Type type) {
+        super(navigator);
 
         this.type = type;
+    }
 
-        this.itemTypes = MMOItems.plugin.getTypes().getAll().stream().filter(Type::isDisplayed).collect(Collectors.toList());
+    public static ItemBrowser of(Player player, Type type) {
+        TypeBrowser prev = TypeBrowser.of(player);
+        return new ItemBrowser(prev.getNavigator(), type);
     }
 
     @NotNull
     @Override
     public Inventory getInventory() {
-
-        /*
-         * ------------------------------
-         *          TYPE BROWSER
-         *
-         *          Displays all possible item types if no type was previously selected by the player.
-         * ------------------------------
-         */
-        if (type == null) {
-
-            int[] usedSlots = slots;
-            int min = (page - 1) * usedSlots.length;
-            int max = page * usedSlots.length;
-            int n = 0;
-
-            // Create inventory
-            Inventory inv = Bukkit.createInventory(this, 54, "物品浏览器 (QQ: 3217962725)");
-
-            // Fetch the list of types
-            for (int j = min; j < Math.min(max, itemTypes.size()); j++) {
-
-                // Current type to display into the GUI
-                Type currentType = itemTypes.get(j);
-
-                // Get number of items
-                int items = MMOItems.plugin.getTemplates().getTemplates(currentType).size();
-
-                // Display how many items are in the type
-                final ItemStack item = currentType.getItem();
-                item.setAmount(Math.max(1, Math.min(64, items)));
-                ItemMeta meta = item.getItemMeta();
-                if (MythicLib.plugin.getVersion().isAbove(1, 20, 5)) VersionUtils.addEmptyAttributeModifier(meta);
-                AdventureUtils.setDisplayName(meta, String.format("&a%s&8 (点击浏览)", currentType.getName()));
-                meta.addItemFlags(ItemFlag.values());
-                List<String> lore = new ArrayList<>();
-                lore.add(String.format("&7&o当前%s %s &7%s 物品.", items == 1 ? "该类型" : "此类型", items < 1 ? "&c&o没有" : "&6&o有" + items, items == 1 ? "" : ""));
-                AdventureUtils.setLore(meta, lore);
-                meta.getPersistentDataContainer().set(TYPE_ID_KEY, PersistentDataType.STRING, currentType.getId());
-                item.setItemMeta(meta);
-
-                // Set item
-                inv.setItem(slots[n++], item);
-            }
-
-            // Fill remainder slots with 'No Type' notice
-            ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-            ItemMeta glassMeta = glass.getItemMeta();
-            glassMeta.setDisplayName(ChatColor.RED + "- 没有类型 -");
-            glass.setItemMeta(glassMeta);
-
-            // Next Page
-            ItemStack next = new ItemStack(Material.ARROW);
-            ItemMeta nextMeta = next.getItemMeta();
-            nextMeta.setDisplayName(ChatColor.GREEN + "下一页");
-            next.setItemMeta(nextMeta);
-
-            // Previous Page
-            ItemStack previous = new ItemStack(Material.ARROW);
-            ItemMeta previousMeta = previous.getItemMeta();
-            previousMeta.setDisplayName(ChatColor.GREEN + "上一页");
-            previous.setItemMeta(previousMeta);
-
-            // Fill
-            while (n < slots.length) {
-                inv.setItem(slots[n++], glass);
-            }
-            inv.setItem(18, page > 1 ? previous : null);
-            inv.setItem(26, max >= MMOItems.plugin.getTypes().getAll().size() ? null : next);
-
-            // Done
-            return inv;
-        }
-
-        /*
-         * ------------------------------
-         *          ITEM BROWSER
-         *
-         *          Displays all the items of the chosen Type
-         *  ------------------------------
-         */
         Inventory inv = Bukkit.createInventory(this, 54, (deleteMode ? "删除模式: " : "物品类型浏览: ") + MythicLib.plugin.getAdventureParser().stripColors(type.getName()));
 
         /*
@@ -255,7 +167,7 @@ public class ItemBrowser extends PluginInventory {
             }
 
             // Build item -> any errors?
-            final ItemStack item = template.newBuilder(playerData.getRPG(), true).build().newBuilder().build();
+            final ItemStack item = template.newBuilder(PlayerData.get(playerData).getRPG(), true).build().newBuilder().build();
             if (item == null || item.getType().isAir() || !item.getType().isItem() || item.getItemMeta() == null) {
 
                 // Set Item
@@ -352,8 +264,8 @@ public class ItemBrowser extends PluginInventory {
             } else if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "上一页")) {
                 page--;
                 open();
-            } else if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + AltChar.rightArrow + "返回"))
-                new ItemBrowser(getPlayer()).open();
+            } else if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + AltChar.rightArrow + " 返回"))
+                getNavigator().popOpen();
 
             else if (item.getItemMeta().getDisplayName().equals(ChatColor.RED + "取消删除")) {
                 deleteMode = false;
@@ -361,16 +273,9 @@ public class ItemBrowser extends PluginInventory {
             } else if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "创建"))
                 new NewItemEdition(this).enable("在聊天中输入您想要的文字");
 
-            else if (type != null && item.getItemMeta().getDisplayName().equals(ChatColor.RED + "删除物品")) {
+            else if ( item.getItemMeta().getDisplayName().equals(ChatColor.RED + "删除物品")) {
                 deleteMode = true;
                 open();
-            } else if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "下载默认资源包")) {
-                MythicLib.plugin.getVersion().getWrapper().sendJson(getPlayer(),
-                        "[{\"text\":\"点击下载!\",\"color\":\"green\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + CUSTOM_RP_DOWNLOAD_LINK + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Click to download via Dropbox\",\"italic\":true,\"color\":\"white\"}]}}]");
-                getPlayer().closeInventory();
-            } else if (type == null && !item.getItemMeta().getDisplayName().equals(ChatColor.RED + "- 无类型 -")) {
-                final String typeId = item.getItemMeta().getPersistentDataContainer().get(TYPE_ID_KEY, PersistentDataType.STRING);
-                new ItemBrowser(getPlayer(), MMOItems.plugin.getTypes().get(typeId)).open();
             }
         }
 
@@ -385,12 +290,12 @@ public class ItemBrowser extends PluginInventory {
 
         } else {
             if (event.getAction() == InventoryAction.PICKUP_ALL) {
-                getPlayer().getInventory().addItem(MMOItems.plugin.getItem(type, id, playerData));
+                getPlayer().getInventory().addItem(MMOItems.plugin.getItem(type, id, PlayerData.get(player)));
                 getPlayer().playSound(getPlayer().getLocation(), Sounds.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
             }
 
             if (event.getAction() == InventoryAction.PICKUP_HALF)
-                new ItemEdition(getPlayer(), MMOItems.plugin.getTemplates().getTemplate(type, id)).open();
+                new ItemEdition(getNavigator(), MMOItems.plugin.getTemplates().getTemplate(type, id)).open();
         }
     }
 }

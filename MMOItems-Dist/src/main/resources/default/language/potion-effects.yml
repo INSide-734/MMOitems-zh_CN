@@ -31,4 +31,9 @@ dolphins-grace: 海豚的恩惠
 bad-omen: 不祥之兆
 hero-of-the-village: 村庄英雄
 darkness: 黑暗
-wind-charged:
+minecraft:wind-charged: '蓄风'
+minecraft:raid-omen: '袭击之兆'
+minecraft:infested: '寄生'
+minecraft:weaving: '盘丝'
+minecraft:trial-omen: '试炼之兆'
+minecraft:oozing: '渗浆'

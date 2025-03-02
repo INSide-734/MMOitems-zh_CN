@@ -62,7 +62,10 @@ public class RMGRR_LegacyBurning implements RecipeRegistry {
         return displayListItem;
     }
 
-    @Override public void openForPlayer(@NotNull EditionInventory inv, @NotNull String recipeName, Object... otherParams) { new RMG_BurningLegacy(inv.getPlayer(), inv.getEdited(), recipeName, this).open(inv); }
+    @Override
+    public void openForPlayer(@NotNull EditionInventory inv, @NotNull String recipeName, Object... otherParams) {
+        new RMG_BurningLegacy(inv.getNavigator(), inv.getEdited(), recipeName, this).open(inv);
+    }
 
     /**
      * Actually doesnt really send this thing to MythicLib

@@ -6,33 +6,38 @@ import net.Indyuce.mmoitems.api.crafting.condition.Condition;
 import net.Indyuce.mmoitems.api.player.PlayerData;
 import org.apache.commons.lang.Validate;
 
+import java.text.DecimalFormat;
+
 public class MoneyCondition extends Condition {
-	private final double amount;
+    private final double amount;
+    private final DecimalFormat format;
 
-	public MoneyCondition(MMOLineConfig config) {
-		super("money");
+    public MoneyCondition(MMOLineConfig config) {
+        super("money");
 
-		Validate.isTrue(MMOItems.plugin.hasEconomy(), "No economy plugin found");
-		config.validateKeys("amount");
-		amount = config.getDouble("amount");
-	}
+        Validate.isTrue(MMOItems.plugin.hasEconomy(), "No economy plugin found");
+        config.validateKeys("amount");
+        amount = config.getDouble("amount");
 
-	@Override
-	public boolean isMet(PlayerData data) {
-		return MMOItems.plugin.getVault().getEconomy().has(data.getPlayer(), amount);
-	}
+        format = new DecimalFormat(config.getString("format", "0.#"));
+    }
 
-	@Override
-	public String formatDisplay(String string) {
-		return string.replace("#money#", String.valueOf(amount));
-	}
+    @Override
+    public boolean isMet(PlayerData data) {
+        return MMOItems.plugin.getVault().getEconomy().has(data.getPlayer(), amount);
+    }
 
-	@Override
-	public void whenCrafting(PlayerData data) {
-		MMOItems.plugin.getVault().getEconomy().withdrawPlayer(data.getPlayer(), amount);
-	}
+    @Override
+    public String formatDisplay(String string) {
+        return string.replace("#money#", format.format(amount));
+    }
 
-	public double getAmount() {
-		return amount;
-	}
+    @Override
+    public void whenCrafting(PlayerData data) {
+        MMOItems.plugin.getVault().getEconomy().withdrawPlayer(data.getPlayer(), amount);
+    }
+
+    public double getAmount() {
+        return amount;
+    }
 }

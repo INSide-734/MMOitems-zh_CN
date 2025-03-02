@@ -48,7 +48,7 @@ public class Elements extends ItemStat<RandomElementListData, ElementListData> i
     @Override
     public void whenClicked(@NotNull EditionInventory inv, @NotNull InventoryClickEvent event) {
         if (event.getAction() == InventoryAction.PICKUP_ALL)
-            new ElementsEdition(inv.getPlayer(), inv.getEdited()).open(inv);
+            new ElementsEdition(inv.getNavigator(), inv.getEdited()).open(inv);
 
         if (event.getAction() == InventoryAction.PICKUP_HALF)
             if (inv.getEditedSection().contains("element")) {

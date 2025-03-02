@@ -39,7 +39,7 @@ public class Crafting extends ItemStat<RandomStatData<StatData>, StatData> {
 	@Override
 	public void whenClicked(@NotNull EditionInventory inv, @NotNull InventoryClickEvent event) {
 		if (event.getAction() == InventoryAction.PICKUP_ALL)
-			new RecipeTypeListGUI(inv.getPlayer(), inv.getEdited()).open(inv);
+			new RecipeTypeListGUI(inv.getNavigator(), inv.getEdited()).open(inv);
 
 		else if (event.getAction() == InventoryAction.PICKUP_HALF && inv.getEditedSection().contains("crafting")) {
 			inv.getEditedSection().set("crafting", null);

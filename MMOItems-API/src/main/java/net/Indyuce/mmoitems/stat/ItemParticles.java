@@ -45,7 +45,7 @@ public class ItemParticles extends ItemStat<ParticleData, ParticleData> {
 			return;
 		}
 
-		new ParticlesEdition(inv.getPlayer(), inv.getEdited()).open(inv);
+		new ParticlesEdition(inv.getNavigator(), inv.getEdited()).open(inv);
 	}
 
 	@Override

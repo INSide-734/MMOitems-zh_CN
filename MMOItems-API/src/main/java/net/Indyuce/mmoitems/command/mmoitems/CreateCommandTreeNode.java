@@ -45,7 +45,7 @@ public class CreateCommandTreeNode extends CommandTreeNode {
 		MMOItems.plugin.getTemplates().requestTemplateUpdate(type, name);
 
 		if (sender instanceof Player)
-			new ItemEdition((Player) sender, MMOItems.plugin.getTemplates().getTemplate(type, name)).open();
+			ItemEdition.of((Player) sender, MMOItems.plugin.getTemplates().getTemplate(type, name)).open();
 		sender.sendMessage(MMOItems.plugin.getPrefix() + ChatColor.GREEN + "You successfully created " + name + "!");
 		return CommandResult.SUCCESS;
 	}

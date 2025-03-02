@@ -9,6 +9,7 @@ import io.lumine.mythic.lib.api.util.ui.FriendlyFeedbackCategory;
 import io.lumine.mythic.lib.api.util.ui.FriendlyFeedbackProvider;
 import io.lumine.mythic.lib.api.util.ui.QuickNumberRange;
 import io.lumine.mythic.lib.api.util.ui.SilentNumbers;
+import io.lumine.mythic.lib.gui.Navigator;
 import io.lumine.mythic.lib.util.AdventureUtils;
 import io.lumine.mythic.lib.version.VersionUtils;
 import net.Indyuce.mmoitems.ItemStats;
@@ -23,7 +24,6 @@ import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMG_RecipeInterpreter
 import net.Indyuce.mmoitems.gui.edition.recipe.registry.RecipeRegistry;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -61,13 +61,13 @@ public abstract class RecipeEditorGUI extends EditionInventory {
      * > Recipe Type: How to use the recipe, is it Shaped, Shapeless, Smithing, Smelting...?
      * </code>
      *
-     * @param player         Player to display the Edition Inventory to
+     * @param navigator      Current UI navigator
      * @param template       MMOItem Template being edited
      * @param recipeName     Name of this particular Recipe
      * @param recipeRegistry Load/Save Information of this Recipe Type
      */
-    public RecipeEditorGUI(@NotNull Player player, @NotNull MMOItemTemplate template, @NotNull String recipeName, @NotNull RecipeRegistry recipeRegistry) {
-        super(player, template);
+    public RecipeEditorGUI(@NotNull Navigator navigator, @NotNull MMOItemTemplate template, @NotNull String recipeName, @NotNull RecipeRegistry recipeRegistry) {
+        super(navigator, template);
 
         // Store name
         this.recipeName = recipeName;
@@ -167,7 +167,7 @@ public abstract class RecipeEditorGUI extends EditionInventory {
 
     /**
      * @return The reference to the Amount Button, for ease of access
-     * of the ItemStack displayed for the output of this recipe.
+     *         of the ItemStack displayed for the output of this recipe.
      */
     @NotNull
     public RBA_AmountOutput getAmountButton() {
@@ -179,14 +179,14 @@ public abstract class RecipeEditorGUI extends EditionInventory {
 
     /**
      * @return An item may have multiple recipes, this is the name
-     * of the one being edited. So far, historically, they
-     * have just been a number.
-     * <br>
-     * <br>
-     * In YML, <code>[ID].crafting.[recipe].[name]</code> this
-     * string is the value of [name]
-     * <br>
-     * Ex. <code>STEEL_SWORD.crafting.shaped.1</code>
+     *         of the one being edited. So far, historically, they
+     *         have just been a number.
+     *         <br>
+     *         <br>
+     *         In YML, <code>[ID].crafting.[recipe].[name]</code> this
+     *         string is the value of [name]
+     *         <br>
+     *         Ex. <code>STEEL_SWORD.crafting.shaped.1</code>
      */
     @NotNull
     public String getRecipeName() {
@@ -329,8 +329,8 @@ public abstract class RecipeEditorGUI extends EditionInventory {
      * @param absolute Absolute slot clicked by the player, for example,
      *                 0 is the top left corner of the edition inventory.
      * @return <code>-1</code> If the slot is not one of the <b>input ingredient</b>
-     * slots, or a number greater or equal to zero depending on which input
-     * ingredient it is.
+     *         slots, or a number greater or equal to zero depending on which input
+     *         ingredient it is.
      */
     abstract int getInputSlot(int absolute);
 
@@ -686,7 +686,7 @@ public abstract class RecipeEditorGUI extends EditionInventory {
      * This method moves that into [ID].crafting.shaped.recipe.input
      *
      * @return The recipe name section result from this operation. <br>
-     * [ID].base.crafting.[TYPE].[NAME]
+     *         [ID].base.crafting.[TYPE].[NAME]
      */
     public static ConfigurationSection moveInput(@NotNull ConfigurationSection recipeSection, @NotNull String nameOfRecipe) {
         ConfigurationSection name;

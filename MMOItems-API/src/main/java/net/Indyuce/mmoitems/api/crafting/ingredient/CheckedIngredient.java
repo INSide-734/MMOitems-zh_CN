@@ -3,15 +3,14 @@ package net.Indyuce.mmoitems.api.crafting.ingredient;
 import net.Indyuce.mmoitems.api.crafting.ingredient.inventory.PlayerIngredient;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
 
 public class CheckedIngredient {
     @NotNull
-    private final Ingredient ingredient;
-    @Nullable
+    private final Ingredient<?> ingredient;
+    @NotNull
     private final List<PlayerIngredient> found;
     private final boolean isHad;
 
@@ -25,7 +24,7 @@ public class CheckedIngredient {
      * @param found      The corresponding ingredient found in the player's
      *                   ingredient
      */
-    public CheckedIngredient(@NotNull Ingredient ingredient, @NotNull List<PlayerIngredient> found) {
+    public CheckedIngredient(@NotNull Ingredient<?> ingredient, @NotNull List<PlayerIngredient> found) {
         this.ingredient = ingredient;
         this.found = found;
         this.isHad = getTotalAmount() >= ingredient.getAmount();
@@ -79,11 +78,11 @@ public class CheckedIngredient {
     }
 
     @NotNull
-    public Ingredient getIngredient() {
+    public Ingredient<?> getIngredient() {
         return ingredient;
     }
 
-    @Nullable
+    @NotNull
     public List<PlayerIngredient> getFound() {
         return found;
     }

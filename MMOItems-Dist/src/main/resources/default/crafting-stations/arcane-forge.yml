@@ -1,81 +1,228 @@
 # 禁止倒卖 汉化作者 INSide_734
 # QQ: 3217962725
-# 打开合成站时显示的名称
-name: '神秘炼厂 (#page#/#max#)'
 
-# 制作队列中的最大物品数量，即。玩家能够同时制作的最大物品数量。
-# 必须介于 1 到 64 之间。
+# Name which will be displayed
+# when opening the station
+name: 'Arcane Forge'
+
+# The maximum amount of items in the crafting queue, ie the
+# max number of items players are able to craft simultaneously.
+# Must be between 1 and 64.
 max-queue-size: 10
 
-# 每当制作站中完成一个动作时就会播放的声音。
-# 在此处获取声音名称：
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-sound: ENTITY_EXPERIENCE_ORB_PICKUP
-
-# 这就是 GUI 的样式。您可以通过创建一个以文件名作为 id 的新文件，
-# 在 crafting-stations/layouts 中定义自己的文件。
-layout: default
-
-# 在此配置 GUI
-items:
-    fill:
-        material: AIR
-    no-recipe:
-        material: GRAY_STAINED_GLASS_PANE
-        name: '&a没有配方'
-    no-queue-item:
-        material: GRAY_STAINED_GLASS_PANE
-        name: '&a没有物品在队列中'
+# Optional. Defines a command to open the crafting station UI.
+# Remove this config section to disable.
+#
+# Unless it is some high-end perk, we don't recommend using this,
+# using the `/mi stations open <station> <player>` command from a NPC
+# usually works better from a gameplay perspective.
+command:
+  name: 'arcaneforge'                                   # The command itself
+  description: 'Open the arcane forge'                  # Command description
+  usage: '/arcaneforge'                                 # Command usage
+  permission: 'mmoitems.arcane_forge'                   # Permission needed to use the command
+  aliases: [ af, mmoitems_af ]                          # Command aliases
+  message:
+    no-perm: '&cYou don''t have enough permissions.'    # Message shown when missing permission
+    not-a-player: '&cThis command is for players only.' # Message shown when sender is not a player
 
 # Station recipes
 recipes:
-    magic-essence:
-        output:
-            type: MATERIAL
-            id: MAGIC_ESSENCE
-            amount: 1
-        crafting-time: 5
-        conditions:
-        - 'level{level=5}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=3,display="Magic Fragment"}
-    arcane-helmet:
-        output:
-            type: ARMOR
-            id: ARCANE_HELM
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - 'level{level=4}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=6,display="Magic Fragment"}
-    steel-chestplate:
-        output:
-            type: ARMOR
-            id: ARCANE_CHESTPLATE
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - 'level{level=4}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=9,display="Magic Fragment"}
-    steel-leggings:
-        output:
-            type: ARMOR
-            id: ARCANE_LEGGINGS
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - 'level{level=4}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=8,display="Magic Fragment"}
-    steel-boots:
-        output:
-            type: ARMOR
-            id: ARCANE_BOOTS
-            amount: 1
-        crafting-time: 7
-        conditions:
-        - 'level{level=4}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=5,display="Magic Fragment"}
+  magic-essence:
+    output: 'mmoitems{type=MATERIAL,id=MAGIC_ESSENCE}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=5}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=3,display="Magic Fragments"}'
+  arcane-helmet:
+    output: 'mmoitem{type=ARMOR,id=ARCANE_HELM}'
+    crafting-time: 7
+    lore:
+      - '&7This armor is super unique, though it takes'
+      - '&7quite some materials to craft a full set.'
+    conditions:
+      - 'level{level=4}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
+      - 'vanilla{type=LEATHER,amount=5,display="Leather Pieces"}'
+  arcane-chestplate:
+    output: 'mmoitems{type=ARMOR,id=ARCANE_CHESTPLATE}'
+    crafting-time: 7
+    lore:
+      - '&7This armor is super unique, though it takes'
+      - '&7quite some materials to craft a full set.'
+    conditions:
+      - 'level{level=4}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
+      - 'vanilla{type=LEATHER,amount=8,display="Leather Pieces"}'
+  arcane-leggings:
+    output: 'mmoitems{type=ARMOR,id=ARCANE_LEGGINGS}'
+    crafting-time: 7
+    lore:
+      - '&7This armor is super unique, though it takes'
+      - '&7quite some materials to craft a full set.'
+    conditions:
+      - 'level{level=4}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
+      - 'vanilla{type=LEATHER,amount=7,display="Leather Pieces"}'
+  arcane-boots:
+    output: 'mmoitems{type=ARMOR,id=ARCANE_BOOTS}'
+    crafting-time: 7
+    lore:
+      - '&7This armor is super unique, though it takes'
+      - '&7quite some materials to craft a full set.'
+    conditions:
+      - 'level{level=4}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
+      - 'vanilla{type=LEATHER,amount=4,display="Leather Pieces"}'
+
+gui-layout:
+  # GUI display name
+  name: 'Arcane Forge ({page}/{max_page})'
+
+  # Number of slots in your inventory. Must be
+  # between 9 and 54 and must be a multiple of 9.
+  slots: 54
+
+  # When enabled, players can right click recipes to
+  # open a different UI (see below for configurating this UI)
+  # showing all ingredients required as well as the item
+  # being crafted/upgrading. This is referred as the "preview" GUI.
+  enable_right_click_preview: true
+
+  # Sounds performed on specific actions.
+  sound:
+    craft: ENTITY_EXPERIENCE_ORB_PICKUP
+    upgrade: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_cancel: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_claim: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_add: ENTITY_EXPERIENCE_ORB_PICKUP
+
+  items:
+
+    # Next/Previous page
+    previous_page:
+      item: PLAYER_HEAD
+      name: '&6Previous Page'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+      slots: [ 9 ]
+    next_page:
+      item: PLAYER_HEAD
+      name: '&6Next Page'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
+      slots: [ 17 ]
+
+    # Items relative to crafting queue
+    previous_queue_item:
+      item: PLAYER_HEAD
+      function: previous_queue_item
+      name: '&6Previous Item'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+    next_queue_item:
+      item: PLAYER_HEAD
+      name: '&6Next Item'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19'
+
+    queued_item:
+      slots: [ 38, 39, 40, 41, 42 ]
+
+      existing:
+        name: '&6&lQueue&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oThis item was successfully crafted.'
+          - '{queue}&7&oThis item is in the crafting queue.'
+          - '{queue}'
+          - '{queue}&7Time Left: &c{time_left}'
+          - ''
+          - '{ready}&e► Click to claim!'
+          - '{queue}&e► Click to cancel'
+
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&6No Item In Queue'
+
+    recipe:
+      function: recipe
+      slots: [ 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25 ]
+      delay_format: 'smhdMy'
+
+      # How a crafting recipe is displayed
+      craft:
+        name: '&a&lCraft&f {name}'
+        name_multiple: '&a&lCraft&f {amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Conditions:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Crafting Time: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Ingredients:'
+          - '{lore}'
+          - ''
+          - '&e► Left click to craft!'
+          - '&e► Right click to preview!'
+
+      # How an upgrading recipe is displayed
+      upgrade:
+        name: '&e&lUpgrade&f {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Conditions:'
+          - '{ingredients}'
+          - '{ingredients}&8Ingredients:'
+          - '{lore}'
+          - ''
+          - '&e► Left click to upgrade!'
+          - '&e► Right click to preview!'
+
+      # When no recipe exists
+      none:
+        item: GRAY_STAINED_GLASS_PANE # Can be set to AIR
+        name: '&6No Recipe'
+
+# You can fully delete this config section if you toggled off the option
+# `enable_right_click_preview` in the previous UI layout configuration.
+preview-gui-layout:
+  name: 'Preview'
+  slots: 45
+  items:
+
+    # Some border surrounding the ingredients (purely cosmetic)
+    cosmetic_border:
+      item: GRAY_STAINED_GLASS_PANE
+      name: '&6'
+      slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 17, 18, 19, 20, 24, 25, 26, 27, 29, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44 ]
+
+    # Confirm/Back buttons
+    confirm:
+      item: EMERALD
+      name: '&6Confirm'
+      slots: [ 34 ]
+    back:
+      item: PLAYER_HEAD
+      name: '&6Back'
+      slots: [ 10 ]
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+
+    # Preview item being crafted/upgraded
+    preview_output:
+      slots: [ 16 ]
+
+    # Show the recipe
+    recipe:
+      slots: [ 28 ]
+      material: KNOWLEDGE_BOOK # Optional. Item type will not be replaced if this line is commented out.
+      remove_lore_lines: 3 # Amount of lines to strip off the item lore
+
+    # Items being processed
+    ingredient:
+      slots: [ 12, 13, 14, 21, 22, 23, 30, 31, 32 ]
+
+      # When no ingredient
+      none:
+        material: AIR

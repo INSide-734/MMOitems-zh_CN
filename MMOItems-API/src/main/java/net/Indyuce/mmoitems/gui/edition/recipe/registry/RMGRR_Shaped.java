@@ -39,7 +39,7 @@ public class RMGRR_Shaped implements RecipeRegistry {
     @NotNull @Override public ItemStack getDisplayListItem() { return displayListItem; }
 
     @Override public void openForPlayer(@NotNull EditionInventory inv, @NotNull String recipeName, Object... otherParams) {
-        new RMG_Shaped(inv.getPlayer(), inv.getEdited(), recipeName, this).open(inv);
+        new RMG_Shaped(inv.getNavigator(), inv.getEdited(), recipeName, this).open(inv);
     }
 
     @NotNull

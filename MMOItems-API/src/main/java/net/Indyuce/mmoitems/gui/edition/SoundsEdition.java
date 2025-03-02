@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.util.AltChar;
+import io.lumine.mythic.lib.gui.Navigator;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.CustomSound;
@@ -29,8 +30,8 @@ public class SoundsEdition extends EditionInventory {
 			CORRESPONDING_SLOT.put(sound.getSlot(), sound.name().replace("_", "-").toLowerCase());
 	}
 
-	public SoundsEdition(Player player, MMOItemTemplate template) {
-		super(player, template);
+	public SoundsEdition(Navigator navigator, MMOItemTemplate template) {
+		super(navigator, template);
 	}
 
 	@Override

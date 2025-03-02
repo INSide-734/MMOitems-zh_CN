@@ -148,7 +148,7 @@ public class Type implements CooldownObject, PreloadedObject {
 
         name = config.getString("name", name);
         item = MMOUtils.readIcon(config.getString("display", item == null ? Material.STONE.toString() : item.getType().toString()));
-        (unidentifiedTemplate = new UnidentifiedItem(this)).update(config.getConfigurationSection("unident-item"));
+        unidentifiedTemplate = new UnidentifiedItem(config.getConfigurationSection("unident-item"));
         loreFormat = config.getString("LoreFormat", (parent != null ? parent.loreFormat : null));
         attackCooldownKey = config.getString("attack-cooldown-key", "default");
         meleeAttacks = !config.getBoolean("disable-melee-attacks");

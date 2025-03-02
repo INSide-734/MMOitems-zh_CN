@@ -129,7 +129,7 @@ public class ArrowParticles extends ItemStat<ArrowParticlesData, ArrowParticlesD
 
 	@Override
 	public void whenClicked(@NotNull EditionInventory inv, @NotNull InventoryClickEvent event) {
-		new ArrowParticlesEdition(inv.getPlayer(), inv.getEdited()).open(inv);
+		new ArrowParticlesEdition(inv.getNavigator(), inv.getEdited()).open(inv);
 	}
 
 	@Override

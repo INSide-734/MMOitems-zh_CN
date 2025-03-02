@@ -44,7 +44,10 @@ public class PlaceholderCondition extends GenericCondition {
                 case "!=":
                     return Math.abs(Double.parseDouble(unparsed1) - Double.parseDouble(unparsed2)) > EQUALITY_THRESHOLD;
                 case "equals":
+                case "eq":
                     return unparsed1.equals(unparsed2);
+                case "neq":
+                    return !unparsed1.equals(unparsed2);
                 default:
                     throw new RuntimeException("Comparator not recognized");
             }

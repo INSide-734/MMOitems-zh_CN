@@ -1,5 +1,6 @@
 package net.Indyuce.mmoitems.gui.edition.recipe.gui;
 
+import io.lumine.mythic.lib.gui.Navigator;
 import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
 import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMGRI_SuperShaped;
 import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMG_RecipeInterpreter;
@@ -24,12 +25,12 @@ public class RMG_SuperShaped extends RecipeEditorGUI {
      * An editor for a Super Shaped Recipe. Because the recipe is loaded from the YML when this is created,
      * concurrent modifications of the same recipe are unsupported.
      *
-     * @param player Player editing the recipe ig
-     * @param template Template of which a recipe is being edited
+     * @param navigator  Current UI navigator
+     * @param template   Template of which a recipe is being edited
      * @param recipeName Name of this recipe
      */
-    public RMG_SuperShaped(@NotNull Player player, @NotNull MMOItemTemplate template, @NotNull String recipeName, @NotNull RecipeRegistry recipeRegistry) {
-        super(player, template, recipeName, recipeRegistry);
+    public RMG_SuperShaped(@NotNull Navigator navigator, @NotNull MMOItemTemplate template, @NotNull String recipeName, @NotNull RecipeRegistry recipeRegistry) {
+        super(navigator, template, recipeName, recipeRegistry);
         addButton(new RBA_InputOutput(this));
 
         // Get section and build interpreter

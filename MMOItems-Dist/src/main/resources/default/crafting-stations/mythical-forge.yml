@@ -1,168 +1,254 @@
 # 禁止倒卖 汉化作者 INSide_734
 # QQ: 3217962725
+
 # Name which will be displayed
 # when opening the station
-name: 'Mythical Forge (#page#/#max#)'
+name: 'Mythical Forge'
 
-# The maximum amount of items in the crafting queue ie. the
+# The maximum amount of items in the crafting queue, ie the
 # max number of items players are able to craft simultaneously.
 # Must be between 1 and 64.
-max-queue-size: 10
-
-# The sound that plays whenever an action is
-# completed in the crafting station.
-# GET SOUND NAMES HERE:
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-sound: ENTITY_EXPERIENCE_ORB_PICKUP
-
-# This is how the gui looks. You can define your own
-# in crafting-stations/layouts by creating a new
-# file with the name of the file as the id.
-layout: default
-
-# Crafting station parent. This station will inherit of
-# all the recipes of the specified crafting station
-parent: arcane-forge
-
-# Configure GUI items here
-items:
-    fill:
-        material: AIR
-    no-recipe:
-        material: GRAY_STAINED_GLASS_PANE
-        name: '&a没有配方'
-    no-queue-item:
-        material: GRAY_STAINED_GLASS_PANE
-        name: '&a没有物品在队列'
+max-queue-size: 6
 
 # Station recipes
 recipes:
-    soulstealer:
-        output:
-            type: SWORD
-            id: SOULSTEALER
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - 'level{level=24}'
-        ingredients:
-        - mmoitem{type=MISCELLANEOUS,id=HUMAN_SOUL,amount=8,display="Human Soul"}
-        - mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}
-    fire-essence:
-        output:
-            type: MATERIAL
-            id: FIRE_ESSENCE
-            amount: 1
-        crafting-time: 5
-        conditions:
-        - 'level{level=15}'
-        ingredients:
-        - vanilla{type=BLAZE_POWDER,amount=4,display="Blaze Powder"}
-    fire-totem:
-        output:
-            type: CATALYST
-            id: FIRE_TOTEM
-            amount: 1
-        crafting-time: 30
-        conditions:
-        - 'level{level=10}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=8,display="Fire Essence"}
-        - vanilla{type=BLAZE_ROD,amount=1,display="Blaze Rod"}
-        - vanilla{type=BLAZE_POWDER,amount=4,display="Blaze Powder"}
-    blaze-soul:
-        output:
-            type: GEM_STONE
-            id: BLAZE_SOUL
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - 'level{level=12}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=5,display="Fire Essence"}
-    hell-bow:
-        output:
-            type: BOW
-            id: HELL_BOW
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - 'level{level=24}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=2,display="Fire Essence"}
-        - vanilla{type=BOW,amount=1,display="Bow"}
-    fire-greatlance:
-        output:
-            type: LANCE
-            id: FIRE_GREATLANCE
-            amount: 1
-        crafting-time: 35
-        conditions:
-        - 'level{level=30}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=4,display="Fire Essence"}
-    molten-blade:
-        output:
-            type: GREATSWORD
-            id: MOLTEN_BLADE
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - 'level{level=20}'
-        ingredients:
-        - mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=13,display="Fire Essence"}
-        - mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}
-    wither-essence:
-        output:
-            type: MATERIAL
-            id: WITHER_ESSENCE
-            amount: 1
-        crafting-time: 5
-        conditions:
-        - 'level{level=20}'
-        ingredients:
-        - vanilla{type=WITHER_SKELETON_SKULL}
-    marking-bow:
-        output:
-            type: BOW
-            id: MARKING_BOW
-            amount: 1
-        crafting-time: 20
-        conditions:
-        - 'level{level=20}'
-        ingredients:
-        - vanilla{type=BOW,amount=1,display="Bow"}
-        - mmoitem{type=MATERIAL,id=WITHER_ESSENCE,amount=1,display="Wither Essence"}
-    cursed-wither-skull:
-        output:
-            type: ARMOR
-            id: CURSED_WITHER_SKULL
-            amount: 1
-        crafting-time: 10
-        conditions:
-        - 'level{level=15}'
-        ingredients:
-        - vanilla{type=IRON_HELMET}
-        - mmoitem{type=MATERIAL,id=WITHER_ESSENCE,amount=1,display="Wither Essence"}
-    dead-pharaoh-helmet:
-        output:
-            type: ARMOR
-            id: DEAD_PHARAOH_HELMET
-            amount: 1
-        crafting-time: 10
-        conditions:
-        - 'level{level=10}'
-        ingredients:
-        - vanilla{type=DIAMOND}
-        - vanilla{type=SKELETON_SKULL}
-    mossy-skeleton-skull:
-        output:
-            type: ARMOR
-            id: MOSSY_SKELETON_SKULL
-            amount: 1
-        crafting-time: 10
-        conditions:
-        - 'level{level=17}'
-        ingredients:
-        - vanilla{type=MOSSY_COBBLESTONE}
-        - vanilla{type=SKELETON_SKULL}
+  soulstealer:
+    output: 'mmoitems{type=SWORD,id=SOULSTEALER}'
+    crafting-time: 20
+    conditions:
+      - 'level{level=24}'
+    ingredients:
+      - 'mmoitem{type=MISCELLANEOUS,id=HUMAN_SOUL,amount=8,display="Human Soul"}'
+      - 'mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}'
+  fire-essence:
+    output: 'mmoitems{type=MATERIAL,id=FIRE_ESSENCE}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=15}'
+    ingredients:
+      - 'vanilla{type=BLAZE_POWDER,amount=4,display="Blaze Powder"}'
+  fire-totem:
+    output: 'mmoitems{type=CATALYST,id=FIRE_TOTEM}'
+    crafting-time: 30
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=8,display="Fire Essence"}'
+      - 'vanilla{type=BLAZE_ROD,amount=1,display="Blaze Rod"}'
+      - 'vanilla{type=BLAZE_POWDER,amount=4,display="Blaze Powder"}'
+  blaze-soul:
+    output: 'mmoitems{type=GEM_STONE,id=BLAZE_SOUL}'
+    crafting-time: 20
+    conditions:
+      - 'level{level=12}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=5,display="Fire Essence"}'
+  hell-bow:
+    output: 'mmoitems{type=BOW,id=HELL_BOW}'
+    crafting-time: 20
+    conditions:
+      - 'level{level=24}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=2,display="Fire Essence"}'
+      - 'vanilla{type=BOW,amount=1,display="Bow"}'
+  fire-greatlance:
+    output: 'mmoitems{type=LANCE,id=FIRE_GREATLANCE}'
+    crafting-time: 35
+    conditions:
+      - 'level{level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=4,display="Fire Essence"}'
+  molten-blade:
+    output: 'mmoitems{type=GREATSWORD,id=MOLTEN_BLADE}'
+    crafting-time: 20
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=13,display="Fire Essence"}'
+      - 'mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}'
+  wither-essence:
+    output: 'mmoitems{type=MATERIAL,id=WITHER_ESSENCE}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'vanilla{type=WITHER_SKELETON_SKULL}'
+  marking-bow:
+    output: 'mmoitems{type=BOW,id=MARKING_BOW}'
+    crafting-time: 20
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'vanilla{type=BOW,amount=1,display="Bow"}'
+      - 'mmoitem{type=MATERIAL,id=WITHER_ESSENCE,amount=1,display="Wither Essence"}'
+  cursed-wither-skull:
+    output: 'mmoitems{type=ARMOR,id=CURSED_WITHER_SKULL}'
+    crafting-time: 10
+    conditions:
+      - 'level{level=15}'
+    ingredients:
+      - 'vanilla{type=IRON_HELMET}'
+      - 'mmoitem{type=MATERIAL,id=WITHER_ESSENCE,display="Wither Essence"}'
+  dead-pharaoh-helmet:
+    output: 'mmoitems{type=ARMOR,id=DEAD_PHARAOH_HELMET}'
+    crafting-time: 10
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'vanilla{type=DIAMOND}'
+      - 'vanilla{type=SKELETON_SKULL}'
+  mossy-skeleton-skull:
+    output: 'mmoitems{type=ARMOR,id=MOSSY_SKELETON_SKULL}'
+    crafting-time: 10
+    conditions:
+      - 'level{level=17}'
+    ingredients:
+      - 'vanilla{type=MOSSY_COBBLESTONE}'
+      - 'vanilla{type=SKELETON_SKULL}'
+
+gui-layout:
+  # GUI display name
+  name: 'Mythical Forge ({page}/{max_page})'
+
+  # Number of slots in your inventory. Must be
+  # between 9 and 54 and must be a multiple of 9.
+  slots: 54
+
+  # When enabled, players can right click recipes to
+  # open a different UI (see below for configurating this UI)
+  # showing all ingredients required as well as the item
+  # being crafted/upgrading. This is referred as the "preview" GUI.
+  enable_right_click_preview: true
+
+  # Sounds performed on specific actions.
+  sound:
+    craft: ENTITY_EXPERIENCE_ORB_PICKUP
+    upgrade: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_cancel: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_claim: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_add: ENTITY_EXPERIENCE_ORB_PICKUP
+
+  items:
+
+    # Next/Previous page
+    previous_page:
+      item: PLAYER_HEAD
+      name: '&6Previous Page'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+      slots: [ 9 ]
+    next_page:
+      item: PLAYER_HEAD
+      name: '&6Next Page'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
+      slots: [ 17 ]
+
+    # Items relative to crafting queue
+    previous_queue_item:
+      item: PLAYER_HEAD
+      function: previous_queue_item
+      name: '&6Previous Item'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+    next_queue_item:
+      item: PLAYER_HEAD
+      name: '&6Next Item'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19'
+
+    queued_item:
+      slots: [ 38, 39, 40, 41, 42 ]
+
+      existing:
+        name: '&6&lQueue&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oThis item was successfully crafted.'
+          - '{queue}&7&oThis item is in the crafting queue.'
+          - '{queue}'
+          - '{queue}&7Time Left: &c{time_left}'
+          - ''
+          - '{ready}&e► Click to claim!'
+          - '{queue}&e► Click to cancel'
+
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&6No Item In Queue'
+
+    recipe:
+      function: recipe
+      slots: [ 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25 ]
+      delay_format: 'smhdMy'
+
+      # How a crafting recipe is displayed
+      craft:
+        name: '&a&lCraft&f {name}'
+        name_multiple: '&a&lCraft&f {amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Conditions:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Crafting Time: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Ingredients:'
+          - '{lore}'
+          - ''
+          - '&e► Left click to craft!'
+          - '&e► Right click to preview!'
+
+      # How an upgrading recipe is displayed
+      upgrade:
+        name: '&e&lUpgrade&f {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Conditions:'
+          - '{ingredients}'
+          - '{ingredients}&8Ingredients:'
+          - '{lore}'
+          - ''
+          - '&e► Left click to upgrade!'
+          - '&e► Right click to preview!'
+
+      # When no recipe exists
+      none:
+        item: GRAY_STAINED_GLASS_PANE # Can be set to AIR
+        name: '&6No Recipe'
+
+# You can fully delete this config section if you toggled off the option
+# `enable_right_click_preview` in the previous UI layout configuration.
+preview-gui-layout:
+  name: 'Preview'
+  slots: 45
+  items:
+
+    # Some border surrounding the ingredients (purely cosmetic)
+    cosmetic_border:
+      item: GRAY_STAINED_GLASS_PANE
+      name: '&6'
+      slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 17, 18, 19, 20, 24, 25, 26, 27, 29, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44 ]
+
+    # Confirm/Back buttons
+    confirm:
+      item: EMERALD
+      name: '&6Confirm'
+      slots: [ 34 ]
+    back:
+      item: PLAYER_HEAD
+      name: '&6Back'
+      slots: [ 10 ]
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+
+    # Preview item being crafted/upgraded
+    preview_output:
+      slots: [ 16 ]
+
+    # Show the recipe
+    recipe:
+      slots: [ 28 ]
+      material: KNOWLEDGE_BOOK # Optional. Item type will not be replaced if this line is commented out.
+      remove_lore_lines: 3 # Amount of lines to strip off the item lore
+
+    # Items being processed
+    ingredient:
+      slots: [ 12, 13, 14, 21, 22, 23, 30, 31, 32 ]
+
+      # When no ingredient
+      none:
+        material: AIR

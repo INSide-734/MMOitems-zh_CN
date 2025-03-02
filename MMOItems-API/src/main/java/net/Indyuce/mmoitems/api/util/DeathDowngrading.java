@@ -215,12 +215,13 @@ public class DeathDowngrading {
         ItemStack bakedItem = mmo.newBuilder().build();
 
         // Set durability to zero (full repair)
-        DurabilityItem dur = new DurabilityItem(player, mmo.newBuilder().buildNBT());
+        DurabilityItem dur = DurabilityItem.from(null, mmo.newBuilder().buildNBT());
 
         // Perform durability operations
         if (dur.getDurability() != dur.getMaxDurability()) {
             dur.addDurability(dur.getMaxDurability());
-            bakedItem.setItemMeta(dur.toItem().getItemMeta());}
+            dur.updateInInventory();
+        }
 
         // Send downgrading message
         Message.DEATH_DOWNGRADING.format(ChatColor.RED, "#item#", MMOUtils.getDisplayName(mmo.getNBT().getItem())).send(player);

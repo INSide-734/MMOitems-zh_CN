@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition.recipe;
 
 import io.lumine.mythic.lib.api.util.ItemFactory;
 import io.lumine.mythic.lib.api.util.ui.SilentNumbers;
+import io.lumine.mythic.lib.gui.Navigator;
 import io.lumine.mythic.lib.version.VersionUtils;
 import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
 import net.Indyuce.mmoitems.api.util.message.FFPMMOItems;
@@ -48,8 +49,8 @@ public class RecipeListGUI extends EditionInventory {
 
     boolean invalidRecipe;
 
-    public RecipeListGUI(@NotNull Player player, @NotNull MMOItemTemplate template, @NotNull RecipeRegistry kind) {
-        super(player, template);
+    public RecipeListGUI(@NotNull Navigator navigator, @NotNull MMOItemTemplate template, @NotNull RecipeRegistry kind) {
+        super(navigator, template);
         recipeType = kind;
 
         // Which item to fill the area with?

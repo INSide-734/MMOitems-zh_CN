@@ -7,7 +7,7 @@ author: Indyuce
 description: ${project.description}
 depend: [MythicLib]
 softdepend: [WorldGuard,Residence,BossShopPro,Fabled,SkillsPro,MMOCore,MMOProfiles,MythicMobs,PlaceholderAPI,Vault,Denizen,AureliumSkills,AuraSkills,MythicEnchants]
-loadbefore: [MMOInventory]
+loadbefore: [MMOInventory, Oraxen]
 api-version: 1.14
 website: www.phoenixdevt.fr
 commands:

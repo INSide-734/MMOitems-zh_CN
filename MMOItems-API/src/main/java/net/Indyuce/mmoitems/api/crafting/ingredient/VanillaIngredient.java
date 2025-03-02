@@ -110,9 +110,10 @@ public class VanillaIngredient extends Ingredient<VanillaPlayerIngredient> {
 
 	}
 
-	@Override public String getKey() { return "vanilla:" + (vanillaBackward ? material.toString().toLowerCase() : filter.toString().toLowerCase().replace(" ", "__")) + "_" + displayName; }
-
-	@Override public String formatDisplay(String s) { return s.replace("#item#", display).replace("#amount#", String.valueOf(getAmount())); }
+	@Override
+	public String formatDisplay(String s) {
+		return s.replace("#item#", display).replace("#amount#", String.valueOf(getAmount()));
+	}
 
 	@Override
 	public boolean matches(VanillaPlayerIngredient ing) {
@@ -137,6 +138,14 @@ public class VanillaIngredient extends Ingredient<VanillaPlayerIngredient> {
 			// Sweet PooF matching
 			return filter.matches(ing.getSourceItem(), true, null);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "VanillaIngredient{" +
+				"displayName='" + displayName + '\'' +
+				", material=" + material +
+				'}';
 	}
 
 	@NotNull

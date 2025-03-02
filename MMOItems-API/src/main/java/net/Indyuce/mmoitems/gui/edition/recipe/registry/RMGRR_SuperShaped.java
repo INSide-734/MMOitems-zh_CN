@@ -39,7 +39,7 @@ public class RMGRR_SuperShaped implements RecipeRegistry {
     @NotNull @Override public ItemStack getDisplayListItem() { return displayListItem; }
 
     @Override public void openForPlayer(@NotNull EditionInventory inv, @NotNull String recipeName, Object... otherParams) {
-        new RMG_SuperShaped(inv.getPlayer(), inv.getEdited(), recipeName, this).open(inv);
+        new RMG_SuperShaped(inv.getNavigator(), inv.getEdited(), recipeName, this).open(inv);
     }
 
     @NotNull

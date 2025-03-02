@@ -74,8 +74,6 @@ public enum Message {
     CONDITIONS_NOT_MET("You cannot craft this item."),
     CRAFTING_CANCELED("You cancelled a crafting recipe."),
     CRAFTING_QUEUE_FULL("The crafting queue is currently full."),
-    STATION_BIG_STACK("Amount Crafted: #size#"),
-    RECIPE_PREVIEW("Recipe Preview"),
     UNABLE_TO_REPAIR("This item can't be repaired by this consumable!"),
     ;
 

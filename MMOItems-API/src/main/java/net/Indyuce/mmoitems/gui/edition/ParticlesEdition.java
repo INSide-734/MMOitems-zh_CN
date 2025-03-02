@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.util.AltChar;
+import io.lumine.mythic.lib.gui.Navigator;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.edition.StatEdition;
@@ -27,8 +28,8 @@ import java.util.List;
 public class ParticlesEdition extends EditionInventory {
     private static final NamespacedKey PATTERN_MODIFIED_KEY = new NamespacedKey(MMOItems.plugin, "PatternModifierId");
 
-    public ParticlesEdition(Player player, MMOItemTemplate template) {
-        super(player, template);
+    public ParticlesEdition(Navigator navigator, MMOItemTemplate template) {
+        super(navigator, template);
     }
 
     @Override

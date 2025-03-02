@@ -97,8 +97,7 @@ public class DropTableManager implements Listener, Reloadable {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void blockDrops(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (player == null || player.getGameMode() == GameMode.CREATIVE)
-			return;
+		if (player.getGameMode() == GameMode.CREATIVE) return;
 
 		Block block = event.getBlock();
 		Optional<CustomBlock> opt = MMOItems.plugin.getCustomBlocks().getFromBlock(block.getBlockData());

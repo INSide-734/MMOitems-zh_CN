@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.util.AltChar;
+import io.lumine.mythic.lib.gui.Navigator;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.edition.StatEdition;
@@ -21,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArrowParticlesEdition extends EditionInventory {
-	public ArrowParticlesEdition(Player player, MMOItemTemplate template) {
-		super(player, template);
+	public ArrowParticlesEdition(Navigator navigator, MMOItemTemplate template) {
+		super(navigator, template);
 	}
 
 	@Override

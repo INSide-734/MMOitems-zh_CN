@@ -28,6 +28,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -168,6 +169,7 @@ public class PlayerListener implements Listener {
     @Deprecated
     @EventHandler
     public void registerInventoryUpdates1(PlayerSwapHandItemsEvent event) {
+        // TODO
         PlayerData.get(event.getPlayer()).getInventory().scheduleUpdate();
     }
 
@@ -182,6 +184,7 @@ public class PlayerListener implements Listener {
     @Deprecated
     @EventHandler
     public void registerInventoryUpdates2(PlayerItemHeldEvent event) {
+        // TODO
         PlayerData.get(event.getPlayer()).getInventory().scheduleUpdate();
     }
 
@@ -192,7 +195,27 @@ public class PlayerListener implements Listener {
     @Deprecated
     @EventHandler
     public void registerInventoryUpdates3(PlayerDropItemEvent event) {
+        // TODO
         PlayerData.get(event.getPlayer()).getInventory().scheduleUpdate();
+    }
+
+    /**
+     * @deprecated This does cost some performance and that update
+     *         method NEEDS some improvement in the future
+     */
+    @Deprecated
+    @EventHandler
+    public void registerInventoryUpdates4(InventoryCloseEvent event) {
+        // TODO
+        if (event.getPlayer() instanceof Player) {
+            try {
+                // Sometimes the event is called after the player logs off?
+                PlayerData playerData = PlayerData.get((Player) event.getPlayer());
+                playerData.getInventory().scheduleUpdate();
+            } catch (Exception exception) {
+                // Ignore for now
+            }
+        }
     }
 
     /**

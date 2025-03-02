@@ -56,7 +56,7 @@ public class RevisionID extends ItemStat<NumericStatFormula, DoubleData> impleme
 
 	@Override
 	public void whenClicked(@NotNull EditionInventory inv, @NotNull InventoryClickEvent event) {
-		new RevisionInventory(inv.getPlayer(), inv.getEdited()).open(inv);
+		new RevisionInventory(inv.getNavigator(), inv.getEdited()).open(inv);
 	}
 
 	@Override

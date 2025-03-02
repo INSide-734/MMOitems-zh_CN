@@ -11,13 +11,13 @@ import net.Indyuce.mmoitems.api.crafting.ingredient.MMOItemIngredient;
 import net.Indyuce.mmoitems.api.crafting.ingredient.inventory.IngredientInventory;
 import net.Indyuce.mmoitems.api.event.PlayerUseCraftingStationEvent;
 import net.Indyuce.mmoitems.api.item.mmoitem.LiveMMOItem;
-import net.Indyuce.mmoitems.api.item.util.ConfigItems;
 import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.Indyuce.mmoitems.api.util.message.Message;
 import net.Indyuce.mmoitems.stat.data.UpgradeData;
 import net.Indyuce.mmoitems.util.MMOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -59,8 +59,9 @@ public class UpgradingRecipe extends Recipe {
 		Message.UPGRADE_SUCCESS.format(ChatColor.YELLOW, "#item#", MMOUtils.getDisplayName(recipe.getUpgraded())).send(data.getPlayer());
 
 		// Play sound
-		if (!hasOption(RecipeOption.SILENT_CRAFT))
-			data.getPlayer().playSound(data.getPlayer().getLocation(), station.getSound(), 1, 1);
+		if (station.getEditableView().upgradeSound != null && !hasOption(RecipeOption.SILENT_CRAFT)) {
+			data.getPlayer().playSound(data.getPlayer(), station.getEditableView().upgradeSound, 1,1);
+		}
 
 		// Recipe used successfully
 		return true;
@@ -120,11 +121,6 @@ public class UpgradingRecipe extends Recipe {
 	}
 
 	@Override
-	public ItemStack display(CheckedRecipe recipe) {
-		return ConfigItems.UPGRADING_RECIPE_DISPLAY.newBuilder(recipe).build();
-	}
-
-	@Override
 	public CheckedRecipe evaluateRecipe(PlayerData data, IngredientInventory inv) {
 		return new CheckedUpgradingRecipe(this, data, inv);
 	}
@@ -137,9 +133,12 @@ public class UpgradingRecipe extends Recipe {
 		private LiveMMOItem mmoitem;
 		private UpgradeData upgradeData;
 
-		public CheckedUpgradingRecipe(Recipe recipe, PlayerData data, IngredientInventory inv) {
-			super(recipe, data, inv);
-		}
+        public CheckedUpgradingRecipe(Recipe recipe, PlayerData data, IngredientInventory inv) {
+            super(recipe, data, inv);
+
+            // Have the upgraded item count as an ingredient
+            if (ingredientsHad && !inv.findMatching(ingredient).isHad()) ingredientsHad = false;
+        }
 
 		public UpgradeData getUpgradeData() {
 			return upgradeData;

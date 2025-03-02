@@ -27,7 +27,7 @@ public class RepairPowerPercent extends DoubleStat implements ConsumableItemInte
             return false;
 
         return RepairPower.handleRepair(playerData, consumable, target, durItem -> {
-            final double maxDurability = durItem != null ? durItem.getMaxDurability() : target.getItem().getType().getMaxDurability();
+            final double maxDurability = durItem.getMaxDurability();
             return (int) (repairPower * maxDurability / 100);
         });
     }

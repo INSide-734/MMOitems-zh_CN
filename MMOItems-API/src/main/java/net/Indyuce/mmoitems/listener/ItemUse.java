@@ -69,7 +69,7 @@ public class ItemUse implements Listener {
             return;
         }
 
-        // Commands & consummables
+        // Commands & Consumables
         final boolean rightClick = event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK;
         if (rightClick) {
             if (useItem.getPlayerData().getMMOPlayerData().getCooldownMap().isOnCooldown(useItem.getMMOItem())) {
@@ -242,9 +242,7 @@ public class ItemUse implements Listener {
                 return;
             }
 
-            // Have to get hand manually because 1.15 and below does not have event.getHand()
-            final ItemStack itemInMainHand = playerData.getPlayer().getInventory().getItemInMainHand();
-            final EquipmentSlot bowSlot = itemInMainHand.isSimilar(event.getBow()) ? EquipmentSlot.MAIN_HAND : EquipmentSlot.OFF_HAND;
+            EquipmentSlot bowSlot = EquipmentSlot.fromBukkit(MMOUtils.getHand(event, playerData.getPlayer()));
             final ProjectileMetadata proj = ProjectileMetadata.create(playerData.getMMOPlayerData(), bowSlot, ProjectileType.ARROW, event.getProjectile());
             proj.setSourceItem(item);
             proj.setCustomDamage(true);
@@ -285,7 +283,8 @@ public class ItemUse implements Listener {
                 return;
             }
 
-            Consumable.ConsumableConsumeResult result = ((Consumable) useItem).useOnPlayer(event.getItem().equals(player.getInventory().getItemInMainHand()) ? org.bukkit.inventory.EquipmentSlot.HAND : org.bukkit.inventory.EquipmentSlot.OFF_HAND, true);
+            org.bukkit.inventory.EquipmentSlot consumeSlot = MMOUtils.getHand(event);
+            Consumable.ConsumableConsumeResult result = ((Consumable) useItem).useOnPlayer(consumeSlot, true);
 
             // No effects are applied and not consumed
             if (result == Consumable.ConsumableConsumeResult.CANCEL) {

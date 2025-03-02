@@ -3,7 +3,6 @@ package net.Indyuce.mmoitems;
 import io.lumine.mythic.lib.MythicLib;
 import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.Indyuce.mmoitems.comp.PhatLootsHook;
-import net.Indyuce.mmoitems.gui.listener.GuiListener;
 import net.Indyuce.mmoitems.listener.*;
 import net.Indyuce.mmoitems.listener.option.DroppedItems;
 import net.Indyuce.mmoitems.listener.option.SoulboundNoDrop;
@@ -24,7 +23,6 @@ public class MMOItemsBukkit {
         Bukkit.getPluginManager().registerEvents(new CustomSoundListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new DurabilityListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new DisableInteractions(), plugin);
-        Bukkit.getPluginManager().registerEvents(new GuiListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new BiomeChangeListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new CustomBlockListener(), plugin);
         PluginUtils.hookDependencyIfPresent("PhatLoots", true, pl -> Bukkit.getPluginManager().registerEvents(new PhatLootsHook(pl), plugin));

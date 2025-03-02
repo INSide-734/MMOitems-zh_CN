@@ -17,14 +17,14 @@ import org.jetbrains.annotations.NotNull;
 @VersionDependant(version = {1, 21, 2})
 public class EquippableSlot extends StringStat implements GemStoneStat {
     public EquippableSlot() {
-        super("EQUIPPABLE_SLOT", Material.LEATHER_LEGGINGS, "装备槽位",
-                new String[]{"可以装备物品的槽位。", "支持的值为 FEET、LEGS BODY、HEAD、HAND、OFFHAND", "仅在 MC 1.21.2+ 上可用"}, new String[0]);
+        super("EQUIPPABLE_SLOT", Material.LEATHER_LEGGINGS, "Equippable Slot",
+                new String[]{"Slot where the item is supposed to be equipped.", "Possible values are FEET, LEGS, CHEST, HEAD, HAND, OFFHAND.", "Setting this value will prevent your item from", "being used in other slots.", "Available only on MC 1.21.2+"}, new String[0]);
     }
 
     @Override
     public void whenApplied(@NotNull ItemStackBuilder item, @NotNull StringData data) {
         EquippableComponent comp = item.getMeta().getEquippable();
-        EquipmentSlot slot = MMOUtils.friendlyValueOf(EquipmentSlot::valueOf, data.getString(), "找不到 ID 为 '%s' 的槽位");
+        EquipmentSlot slot = MMOUtils.friendlyValueOf(EquipmentSlot::valueOf, data.getString(), "Could not find equipment slot with ID '%s'");
         comp.setSlot(slot);
         item.getMeta().setEquippable(comp);
     }

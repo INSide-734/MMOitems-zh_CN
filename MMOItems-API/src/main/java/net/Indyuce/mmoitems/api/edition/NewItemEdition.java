@@ -1,9 +1,9 @@
 package net.Indyuce.mmoitems.api.edition;
 
+import io.lumine.mythic.lib.gui.PluginInventory;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.edition.input.ChatEdition;
 import net.Indyuce.mmoitems.gui.ItemBrowser;
-import net.Indyuce.mmoitems.gui.PluginInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 

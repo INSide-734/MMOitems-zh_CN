@@ -98,14 +98,14 @@ public class ItemListener implements Listener {
                     });
 
             // Does the item have a MMO durability tag?
-            boolean hasCustomDurability = items.stream().allMatch(itemStack -> new DurabilityItem(player, itemStack).isValid());
+            boolean hasCustomDurability = items.stream().allMatch(itemStack -> DurabilityItem.from(player, itemStack) != null);
 
             if (repairDisabled)
                 inv.setResult(air);
             else if (hasCustomDurability) {
-                DurabilityItem durabilityItem = new DurabilityItem(player, items.get(0));
+                DurabilityItem durabilityItem = DurabilityItem.from(player, items.get(0));
                 int summedDurability = items.stream()
-                        .map(itemStack -> new DurabilityItem(player, itemStack))
+                        .map(itemStack -> DurabilityItem.from(player, itemStack))
                         .map(DurabilityItem::getDurability)
                         .reduce(0, Integer::sum);
                 int finalDurability = durabilityItem.getMaxDurability() - Math.min(durabilityItem.getMaxDurability(), summedDurability);

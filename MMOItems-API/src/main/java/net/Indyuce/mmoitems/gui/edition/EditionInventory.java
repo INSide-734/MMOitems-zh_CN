@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.api.util.AltChar;
 import io.lumine.mythic.lib.api.util.ui.FriendlyFeedbackProvider;
+import io.lumine.mythic.lib.gui.Navigator;
 import io.lumine.mythic.lib.version.VInventoryView;
 import io.lumine.mythic.lib.version.VersionUtils;
 import net.Indyuce.mmoitems.MMOItems;
@@ -10,7 +11,7 @@ import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
 import net.Indyuce.mmoitems.api.item.template.ModifierNode;
 import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.Indyuce.mmoitems.api.util.message.FFPMMOItems;
-import net.Indyuce.mmoitems.gui.PluginInventory;
+import net.Indyuce.mmoitems.gui.MMOItemsInventory;
 import net.Indyuce.mmoitems.stat.data.random.RandomStatData;
 import net.Indyuce.mmoitems.stat.data.type.StatData;
 import net.Indyuce.mmoitems.stat.type.ItemStat;
@@ -19,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class EditionInventory extends PluginInventory {
+public abstract class EditionInventory extends MMOItemsInventory {
 
     @Nullable
     protected Inventory inventory;
@@ -65,12 +65,12 @@ public abstract class EditionInventory extends PluginInventory {
     private ItemStack cachedItem;
     private int previousPage;
 
-    public EditionInventory(@NotNull Player player, @NotNull MMOItemTemplate template) {
-        this(player, template, true);
+    public EditionInventory(@NotNull Navigator navigator, @NotNull MMOItemTemplate template) {
+        this(navigator, template, true);
     }
 
-    public EditionInventory(@NotNull Player player, @NotNull MMOItemTemplate template, boolean displaysBack) {
-        super(player);
+    public EditionInventory(@NotNull Navigator navigator, @NotNull MMOItemTemplate template, boolean displaysBack) {
+        super(navigator);
 
         this.displaysBack = displaysBack;
 

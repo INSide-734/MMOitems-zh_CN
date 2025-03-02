@@ -1,30 +1,35 @@
 package net.Indyuce.mmoitems.api.crafting.condition;
 
-import net.Indyuce.mmoitems.api.player.PlayerData;
 import io.lumine.mythic.lib.api.MMOLineConfig;
+import net.Indyuce.mmoitems.api.player.PlayerData;
+
+import java.text.DecimalFormat;
 
 public class ManaCondition extends Condition {
-	private final double amount;
+    private final double amount;
+    private final DecimalFormat format;
 
-	public ManaCondition(MMOLineConfig config) {
-		super("mana");
+    public ManaCondition(MMOLineConfig config) {
+        super("mana");
 
-		config.validate("amount");
-		amount = config.getDouble("amount");
-	}
+        config.validate("amount");
+        amount = config.getDouble("amount");
 
-	@Override
-	public boolean isMet(PlayerData data) {
-		return data.getRPG().getMana() >= amount;
-	}
+        format = new DecimalFormat(config.getString("format", "0.#"));
+    }
 
-	@Override
-	public String formatDisplay(String string) {
-		return string.replace("#mana#", "" + amount);
-	}
+    @Override
+    public boolean isMet(PlayerData data) {
+        return data.getRPG().getMana() >= amount;
+    }
 
-	@Override
-	public void whenCrafting(PlayerData data) {
-		data.getRPG().giveMana(-amount);
-	}
+    @Override
+    public String formatDisplay(String string) {
+        return string.replace("#mana#", format.format(amount));
+    }
+
+    @Override
+    public void whenCrafting(PlayerData data) {
+        data.getRPG().giveMana(-amount);
+    }
 }

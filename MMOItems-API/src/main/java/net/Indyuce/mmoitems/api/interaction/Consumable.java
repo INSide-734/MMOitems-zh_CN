@@ -3,8 +3,8 @@ package net.Indyuce.mmoitems.api.interaction;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.item.ItemTag;
 import io.lumine.mythic.lib.api.item.NBTItem;
-import io.lumine.mythic.lib.api.util.SmartGive;
 import io.lumine.mythic.lib.comp.flags.CustomFlag;
+import io.lumine.mythic.lib.util.SmartGive;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 public class Consumable extends UseItem {
@@ -60,10 +61,10 @@ public class Consumable extends UseItem {
     }
 
     /**
-     * @param vanillaEeating See {@link PlayerConsumable#onConsume(VolatileMMOItem, Player, boolean)}
+     * @param vanillaEating See {@link PlayerConsumable#onConsume(VolatileMMOItem, Player, boolean)}
      * @return If the item should be consumed
      */
-    public ConsumableConsumeResult useOnPlayer(EquipmentSlot handUsed, boolean vanillaEeating) {
+    public ConsumableConsumeResult useOnPlayer(EquipmentSlot handUsed, boolean vanillaEating) {
         NBTItem nbtItem = getNBTItem();
 
         // Inedible stat cancels this operation from the beginning
@@ -76,50 +77,62 @@ public class Consumable extends UseItem {
         if (event.isCancelled())
             return ConsumableConsumeResult.CANCEL;
 
-        // Run through all
-        for (PlayerConsumable sc : MMOItems.plugin.getStats().getPlayerConsumables())
-            sc.onConsume(mmoitem, player, vanillaEeating);
+        final boolean disableRightClickConsume = nbtItem.getBoolean(ItemStats.DISABLE_RIGHT_CLICK_CONSUME.getNBTPath());
+        final boolean consumeItem; // Should item be consumed
 
-        /**
-         * If the item does not have a maximum amount of uses, this will always
-         * return 0 and that portion will just skip.
-         *
-         * If the item does have a max amount of uses but it's the last
-         * use, this portion will skip and the item will be consumed anyways.
-         */
-        int usesLeft = nbtItem.getInteger(ItemStats.MAX_CONSUME.getNBTPath());
-        if (usesLeft > 1) {
-            usesLeft -= 1;
-            nbtItem.addTag(new ItemTag(ItemStats.MAX_CONSUME.getNBTPath(), usesLeft));
+        if (!disableRightClickConsume) {
 
-            /**
-             * This dynamically updates the item lore
+            /*
+             * If the item does not have a maximum amount of uses, this will always
+             * return 0 and that portion will just skip.
+             * If the item does have a max amount of uses but it's the last
+             * use, this portion will skip and the item will be consumed anyways.
              */
-            final String format = MythicLib.inst().parseColors(ItemStats.MAX_CONSUME.getGeneralStatFormat());
-            final String old = format.replace("{value}", String.valueOf(usesLeft + 1));
-            final String replaced = format.replace("{value}", String.valueOf(usesLeft));
-            ItemStack newItem = new LoreUpdate(nbtItem.toItem(), old, replaced).updateLore();
+            int usesLeft = nbtItem.getInteger(ItemStats.MAX_CONSUME.getNBTPath());
 
-            /**
-             * This fixes the issue when players right click stacked consumables
-             */
-            ItemStack oldItem = nbtItem.getItem();
-            if (oldItem.getAmount() > 1) {
-                newItem.setAmount(1);
-                player.getInventory().setItem(handUsed, newItem);
-                oldItem.setAmount(oldItem.getAmount() - 1);
-                new SmartGive(player).give(oldItem);
+            // Decrease amount of uses
+            if (usesLeft > 1) {
 
-                /**
-                 * Player just holding one item
-                 */
-            } else
-                player.getInventory().setItem(handUsed, newItem);
+                // TODO weird MI7 stuff to fix using PDC's
+                ItemStack oldItem = nbtItem.getItem();
+                oldItem.setItemMeta(oldItem.getItemMeta().clone());
 
-            return ConsumableConsumeResult.NOT_CONSUME;
+                usesLeft -= 1;
+                nbtItem.addTag(new ItemTag(ItemStats.MAX_CONSUME.getNBTPath(), usesLeft));
+
+                // Dynamic lore update
+                final String format = MythicLib.inst().parseColors(ItemStats.MAX_CONSUME.getGeneralStatFormat());
+                final String old = format.replace("{value}", String.valueOf(usesLeft + 1));
+                final String replaced = format.replace("{value}", String.valueOf(usesLeft));
+                ItemStack newItem = new LoreUpdate(nbtItem.toItem(), old, replaced).updateLore();
+
+                // This fixes the issue when players right click stacked consumables
+                if (oldItem.getAmount() > 1) {
+                    newItem.setAmount(1);
+                    player.getInventory().setItem(handUsed, newItem);
+                    oldItem.setAmount(oldItem.getAmount() - 1);
+                    new SmartGive(player).give(oldItem);
+                }
+
+                // Player holding non-stacked item
+                else player.getInventory().setItem(handUsed, newItem);
+
+                consumeItem = event.isConsume(false);
+            }
+
+            // Consume item as it is the last use
+            else consumeItem = event.isConsume(true);
         }
 
-        return !event.isConsumed() || nbtItem.getBoolean(ItemStats.DISABLE_RIGHT_CLICK_CONSUME.getNBTPath()) ? ConsumableConsumeResult.NOT_CONSUME : ConsumableConsumeResult.CONSUME;
+        // Never consume item
+        else consumeItem = event.isConsume(false);
+
+        // Run through all consumable effects
+        final boolean vanillaConsumption = vanillaEating && consumeItem;
+        for (PlayerConsumable sc : MMOItems.plugin.getStats().getPlayerConsumables())
+            sc.onConsume(mmoitem, player, vanillaConsumption);
+
+        return consumeItem ? ConsumableConsumeResult.CONSUME : ConsumableConsumeResult.NOT_CONSUME;
     }
 
     /**

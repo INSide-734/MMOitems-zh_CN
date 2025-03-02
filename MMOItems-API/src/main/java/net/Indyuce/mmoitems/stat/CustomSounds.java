@@ -58,7 +58,7 @@ public class CustomSounds extends ItemStat<SoundListData, SoundListData> impleme
 	@Override
 	public void whenClicked(@NotNull EditionInventory inv, @NotNull InventoryClickEvent event) {
 		if (event.getAction() == InventoryAction.PICKUP_ALL)
-			new SoundsEdition(inv.getPlayer(), inv.getEdited()).open(inv);
+			new SoundsEdition(inv.getNavigator(), inv.getEdited()).open(inv);
 
 		if (event.getAction() == InventoryAction.PICKUP_HALF)
 			if (inv.getEditedSection().contains("sounds")) {

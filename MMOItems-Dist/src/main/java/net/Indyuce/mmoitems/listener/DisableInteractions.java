@@ -3,12 +3,10 @@ package net.Indyuce.mmoitems.listener;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
 import org.bukkit.Keyed;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,18 +27,20 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class DisableInteractions implements Listener {
 
     @EventHandler(ignoreCancelled = true)
-    public void itemDropping(PlayerDropItemEvent event){
+    public void itemDropping(PlayerDropItemEvent event) {
         ItemStack itemStack = event.getItemDrop().getItemStack();
 
-        if (isDisabled(NBTItem.get(itemStack),"drop")){
+        if (isDisabled(NBTItem.get(itemStack), "drop")) {
             event.setCancelled(true);
         }
 
     }
+
     @EventHandler
     public void anvilInteractions(InventoryClickEvent event) {
         Inventory inv = event.getClickedInventory();
@@ -158,23 +158,22 @@ public class DisableInteractions implements Listener {
 
     @EventHandler
     public void shootBowInteractions(EntityShootBowEvent event) {
-        if (!(event.getEntity() instanceof Player))
-            return;
+        if (!(event.getEntity() instanceof Player) || event.getBow() == null) return;
 
-        DurabilityItem durItem = new DurabilityItem(((Player) event.getEntity()).getPlayer(), event.getBow());
+        /*
+        Not needed as of Spigot 1.21.4, MI 6.10.1 dev builds
+        DurabilityItem durItem = DurabilityItem.from(((Player) event.getEntity()).getPlayer(), event.getBow());
+        if (durItem != null) {
 
-        // Cannot shoot a broken bow
-        if (durItem.isBroken())
-            event.setCancelled(true);
+            // Cannot shoot a broken bow
+            if (durItem.isBroken())
+                event.setCancelled(true);
+        }
+        */
 
         Player player = (Player) event.getEntity();
-        int arrowSlot = firstArrow(player);
-        if (arrowSlot < 0)
-            return;
-
-        ItemStack stack = player.getInventory().getItem(arrowSlot);
-        if (stack == null)
-            return;
+        ItemStack stack = firstArrow(player);
+        if (stack == null) return;
 
         // Cannot shoot arrow?
         NBTItem arrow = NBTItem.get(stack);
@@ -183,39 +182,45 @@ public class DisableInteractions implements Listener {
             event.setCancelled(true);
     }
 
-    @EventHandler(priority =  EventPriority.LOW)
-    public void attackInteractions(EntityDamageByEntityEvent event) {
+    @EventHandler(priority = EventPriority.LOW)
+    public void attackWithUnidentifiedItems(EntityDamageByEntityEvent event) {
         if (event.getDamage() == 0 || event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK || !(event.getEntity() instanceof LivingEntity)
                 || !(event.getDamager() instanceof Player) || event.getEntity().hasMetadata("NPC") || event.getDamager().hasMetadata("NPC"))
             return;
+
         Player player = (Player) event.getDamager();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        DurabilityItem durItem = new DurabilityItem(player, item);
+        /*
+        Not needed as of Spigot 1.21.4, MI 6.10.1 dev builds
+        DurabilityItem durItem = DurabilityItem.from(player, item);
+        if (durItem != null) {
 
-        // If weapon is broken don't do damage
-        if (durItem.isBroken())
-            event.setCancelled(true);
+            // If weapon is broken don't do damage
+            if (durItem.isBroken())
+                event.setCancelled(true);
+        }
+         */
 
         // Prevent unidentified weapons from being used
-        if (durItem.getNBTItem().hasTag("MMOITEMS_UNIDENTIFIED_ITEM"))
+        if (NBTItem.get(item).hasTag("MMOITEMS_UNIDENTIFIED_ITEM"))
             event.setCancelled(true);
     }
 
-    private int firstArrow(Player player) {
+    @Nullable
+    private ItemStack firstArrow(Player player) {
 
-        // check offhand first
-        if (player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().getType().name().contains("ARROW"))
-            return 40;
+        // Check offhand first
+        if (player.getInventory().getItemInOffHand().getType().name().contains("ARROW"))
+            return player.getInventory().getItemInOffHand();
 
-        // check for every slot
+        // Check for every slot
         ItemStack[] storage = player.getInventory().getStorageContents();
-        for (int j = 0; j < storage.length; j++) {
-            ItemStack item = storage[j];
-            if (item != null && item.getType().name().contains("ARROW"))
-                return j;
-        }
-        return -1;
+        for (ItemStack item : storage)
+            if (item != null && item.getType().name().contains("ARROW")) return item;
+
+        // No arrow to shoot
+        return null;
     }
 
     private boolean isDisabled(NBTItem nbt, String type) {

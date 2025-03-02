@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.util.AltChar;
+import io.lumine.mythic.lib.gui.Navigator;
 import io.lumine.mythic.lib.skill.trigger.TriggerType;
 import net.Indyuce.mmoitems.ItemStats;
 import net.Indyuce.mmoitems.MMOItems;
@@ -34,8 +35,8 @@ public class AbilityEdition extends EditionInventory {
 	private static final int[] slots = { 23, 24, 25, 32, 33, 34, 41, 42, 43, 50, 51, 52 };
 	private static final NamespacedKey ABILITY_MOD_KEY = new NamespacedKey(MMOItems.plugin, "AbilityModifier");
 
-	public AbilityEdition(Player player, MMOItemTemplate template, String configKey) {
-		super(player, template);
+	public AbilityEdition(Navigator navigator, MMOItemTemplate template, String configKey) {
+		super(navigator, template);
 
 		this.configKey = configKey;
 	}
@@ -147,8 +148,8 @@ public class AbilityEdition extends EditionInventory {
 		if (event.getInventory() != event.getClickedInventory() || !MMOUtils.isMetaItem(item, false))
 			return;
 
-		if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + AltChar.rightArrow + "返回")) {
-			new AbilityListEdition(player, template).open(this);
+		if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + AltChar.rightArrow + " 返回")) {
+			new AbilityListEdition(getNavigator(), template).open(this);
 			return;
 		}
 

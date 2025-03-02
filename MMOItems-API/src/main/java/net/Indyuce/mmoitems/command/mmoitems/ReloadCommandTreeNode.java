@@ -49,7 +49,7 @@ public class ReloadCommandTreeNode extends CommandTreeNode {
     }
 
     public void reloadSkills(CommandSender sender) {
-        MythicLib.plugin.getSkills().initialize(true);
+        MythicLib.plugin.getSkills().reload();
         MMOItems.plugin.getSkills().initialize(true);
         sender.sendMessage(MMOItems.plugin.getPrefix() + "Successfully reloaded " + MMOItems.plugin.getSkills().getAll().size() + " skills.");
     }
@@ -65,10 +65,10 @@ public class ReloadCommandTreeNode extends CommandTreeNode {
         MMOItems.plugin.getUpgrades().reload();
         MMOItems.plugin.getWorldGen().reload();
         MMOItems.plugin.getCustomBlocks().reload();
-        MMOItems.plugin.getLayouts().reload();
         MMOItems.plugin.getLore().reload();
         MMOItems.plugin.getTemplates().reload();
         MMOItems.plugin.getStats().reload(true);
+        MMOItems.plugin.getCrafting().reload();
         sender.sendMessage(MMOItems.plugin.getPrefix() + MMOItems.plugin.getName() + " "
                 + MMOItems.plugin.getDescription().getVersion() + " reloaded.");
         sender.sendMessage(MMOItems.plugin.getPrefix() + "- " + ChatColor.RED
@@ -95,7 +95,6 @@ public class ReloadCommandTreeNode extends CommandTreeNode {
     }
 
     public void reloadStations(CommandSender sender) {
-        MMOItems.plugin.getLayouts().reload();
         MMOItems.plugin.getCrafting().reload();
         sender.sendMessage(MMOItems.plugin.getPrefix() + "Successfully reloaded the crafting stations..");
         sender.sendMessage(MMOItems.plugin.getPrefix() + "- " + ChatColor.RED

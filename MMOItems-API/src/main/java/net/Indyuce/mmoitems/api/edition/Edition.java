@@ -1,6 +1,6 @@
 package net.Indyuce.mmoitems.api.edition;
 
-import net.Indyuce.mmoitems.gui.PluginInventory;
+import io.lumine.mythic.lib.gui.PluginInventory;
 
 public interface Edition {
 

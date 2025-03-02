@@ -21,6 +21,10 @@ public abstract class Condition {
 		return id;
 	}
 
+	public boolean hiddenFromLore() {
+		return false;
+	}
+
 	public ConditionalDisplay getDisplay() {
 		return MMOItems.plugin.getCrafting().getConditionInfo(id).getDisplay();
 	}

@@ -1,6 +1,7 @@
 package net.Indyuce.mmoitems.command.mmoitems;
 
 import net.Indyuce.mmoitems.command.MMOItemsCommandTreeRoot;
+import net.Indyuce.mmoitems.gui.TypeBrowser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class BrowseCommandTreeNode extends CommandTreeNode {
 		}
 
 		if (args.length < 2) {
-			new ItemBrowser((Player) sender).open();
+			TypeBrowser.of((Player) sender).open();
 			return CommandResult.SUCCESS;
 		}
 
@@ -34,7 +35,7 @@ public class BrowseCommandTreeNode extends CommandTreeNode {
 			return CommandResult.FAILURE;
 		}
 
-		new ItemBrowser((Player) sender, Type.get(args[1])).open();
+		ItemBrowser.of((Player) sender, Type.get(args[1])).open();
 		return CommandResult.SUCCESS;
 	}
 }

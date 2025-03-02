@@ -76,23 +76,25 @@ public class GiveCommandTreeNode extends CommandTreeNode {
 
 			// generate item
 			ItemStack item = mmoitem.newBuilder().build();
+			Validate.isTrue(item != null && item.getType() != Material.AIR,
+					"Couldn't find/generate the item called '" + template.getId() + "'. Check your console for potential item generation issues.");
 
 			// roll unidentification
 			if (random.nextDouble() < unidentify)
 				item = type.getUnidentifiedTemplate().newBuilder(NBTItem.get(item)).build();
 
-			// set amount
-			Validate.isTrue(item != null && item.getType() != Material.AIR,
-					"Couldn't find/generate the item called '" + template.getId() + "'. Check your console for potential item generation issues.");
-			item.setAmount(amount.getRandomAmount());
+            // set amount
+            int amountComputed = amount.getRandomAmount();
+            Validate.isTrue(amountComputed > 0, "Amount must be positive");
+			item.setAmount(amountComputed);
 
-			// message
-			if (!silent) {
-				Message.RECEIVED_ITEM.format(ChatColor.YELLOW, "#item#", MMOUtils.getDisplayName(item), "#amount#",
-						(item.getAmount() > 1 ? " x" + item.getAmount() : "")).send(target);
+            // message
+            if (!silent) {
+                Message.RECEIVED_ITEM.format(ChatColor.YELLOW, "#item#", MMOUtils.getDisplayName(item), "#amount#",
+						(amountComputed > 1 ? " x" + amountComputed : "")).send(target);
 				if (!sender.equals(target))
 					sender.sendMessage(MMOItems.plugin.getPrefix() + ChatColor.YELLOW + "Successfully gave " + ChatColor.GOLD
-							+ MMOUtils.getDisplayName(item) + (item.getAmount() > 1 ? " x" + item.getAmount() : "") + ChatColor.YELLOW + " to "
+							+ MMOUtils.getDisplayName(item) + (amountComputed > 1 ? " x" + amountComputed : "") + ChatColor.YELLOW + " to "
 							+ ChatColor.GOLD + target.getName() + ChatColor.YELLOW + ".");
 			}
 

@@ -11,12 +11,20 @@ public abstract class GenericCondition extends Condition {
      * One string can also replace multiple permissions.
      * 'Magic Classes Only' instead of 'class.mage' and 'class.apprentice'
      */
-    public final String display;
+    protected final String display;
+
+    protected final boolean hide;
 
     public GenericCondition(String id, MMOLineConfig config) {
         super(id);
 
         this.display = config.getString("display", "<No display chosen>");
+        this.hide = config.getBoolean("hide", false);
+    }
+
+    @Override
+    public boolean hiddenFromLore() {
+        return hide;
     }
 
     @Override

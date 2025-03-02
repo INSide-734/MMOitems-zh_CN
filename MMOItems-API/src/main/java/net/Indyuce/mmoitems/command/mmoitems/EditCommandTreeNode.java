@@ -42,7 +42,7 @@ public class EditCommandTreeNode extends CommandTreeNode {
 			return CommandResult.FAILURE;
 		}
 
-		new ItemEdition((Player) sender, MMOItems.plugin.getTemplates().getTemplate(type, id)).open();
+		ItemEdition.of((Player) sender, MMOItems.plugin.getTemplates().getTemplate(type, id)).open();
 		return CommandResult.SUCCESS;
 	}
 }

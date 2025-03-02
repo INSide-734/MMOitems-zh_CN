@@ -111,9 +111,8 @@ public class CraftingStatus {
             Validate.isTrue(index >= 0, "Could not find item in queue");
             crafts.remove(index);
 
-            // Time elapsed for that item
-            final long gain = Math.min(item.getLeft(), (long) (1000 * item.getRecipe().getCraftingTime()));
-
+            // Remove time left from subsequent items
+            final long gain = Math.min(item.getLeft(), item.getRecipe().getCraftingTime());
             for (int j = index; j < crafts.size(); j++)
                 crafts.get(j).removeDelay(gain);
         }
@@ -127,10 +126,11 @@ public class CraftingStatus {
         }
 
         public void add(CraftingRecipe recipe) {
-            final long completion = (long) recipe.getCraftingTime() * 1000
-                    + (CraftingQueue.this.crafts.isEmpty() ? System.currentTimeMillis() :
-                    CraftingQueue.this.crafts.get(CraftingQueue.this.crafts.size() - 1).completion);
-            add(recipe, System.currentTimeMillis(), completion);
+            final long highestCompletion = CraftingQueue.this.crafts.isEmpty() ? System.currentTimeMillis() :
+                    Math.max(System.currentTimeMillis(), CraftingQueue.this.crafts.get(CraftingQueue.this.crafts.size() - 1).completion);
+            final long itemCompletion = highestCompletion + recipe.getCraftingTime();
+
+            add(recipe, System.currentTimeMillis(), itemCompletion);
         }
 
         private void add(CraftingRecipe recipe, long start, long completion) {
@@ -181,7 +181,7 @@ public class CraftingStatus {
             }
 
             public long getElapsed() {
-                return Math.max((long) getRecipe().getCraftingTime() * 1000, System.currentTimeMillis() - start);
+                return Math.max(getRecipe().getCraftingTime(), System.currentTimeMillis() - start);
             }
 
             public long getLeft() {

@@ -2,6 +2,7 @@ package net.Indyuce.mmoitems.gui.edition;
 
 import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.util.AltChar;
+import io.lumine.mythic.lib.gui.Navigator;
 import io.lumine.mythic.lib.skill.trigger.TriggerType;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
@@ -25,8 +26,8 @@ public class AbilityListEdition extends EditionInventory {
 	private static final int[] slots = { 19, 20, 21, 22, 23, 24, 25 };
 	private static final NamespacedKey CONFIG_KEY = new NamespacedKey(MMOItems.plugin, "ConfigKey");
 
-	public AbilityListEdition(Player player, MMOItemTemplate template) {
-		super(player, template);
+	public AbilityListEdition(Navigator navigator, MMOItemTemplate template) {
+		super(navigator, template);
 	}
 
 	@Override
@@ -138,7 +139,7 @@ public class AbilityListEdition extends EditionInventory {
 		if (tag == null || tag.equals("")) return;
 
 		if (event.getAction() == InventoryAction.PICKUP_ALL)
-			new AbilityEdition(player, template, tag).open(this);
+			new AbilityEdition(navigator, template, tag).open(this);
 
 		if (event.getAction() == InventoryAction.PICKUP_HALF) {
 			if (getEditedSection().contains("ability") && getEditedSection().getConfigurationSection("ability").contains(tag)) {

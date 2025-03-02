@@ -51,7 +51,7 @@ public class Commands extends ItemStat<CommandListData, CommandListData> {
 
     @Override
     public void whenClicked(@NotNull EditionInventory inv, @NotNull InventoryClickEvent event) {
-        new CommandListEdition(inv.getPlayer(), inv.getEdited()).open(inv);
+        new CommandListEdition(inv.getNavigator(), inv.getEdited()).open(inv);
     }
 
     @Override

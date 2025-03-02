@@ -132,7 +132,7 @@ public class ShieldPatternStat extends ItemStat<ShieldPatternData, ShieldPattern
 
             inv.getEditedSection().set("shield-pattern." + last, null);
             inv.registerTemplateEdition();
-			inv.getPlayer().sendMessage(MMOItems.plugin.getPrefix() + "成功删除最后一个图案");
+            inv.getPlayer().sendMessage(MMOItems.plugin.getPrefix() + "成功移除最后一个格式");
         }
     }
 
@@ -142,7 +142,7 @@ public class ShieldPatternStat extends ItemStat<ShieldPatternData, ShieldPattern
 
         if (editedStatData == 1) {
             String[] split = message.split(" ");
-            Validate.isTrue(split.length == 2, message + "不是有效的格式 [PATTERN_TYPE] [DYE_COLOR]");
+            Validate.isTrue(split.length == 2, message + " 不是有效的格式 [PATTERN_TYPE] [DYE_COLOR]");
 
             PatternType patternType = PatternType__valueOf(split[0].toUpperCase().replace("-", "_").replace(" ", "_"));
             DyeColor dyeColor = DyeColor.valueOf(split[1].toUpperCase().replace("-", "_").replace(" ", "_"));

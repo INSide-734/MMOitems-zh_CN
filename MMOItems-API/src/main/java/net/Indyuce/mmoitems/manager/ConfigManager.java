@@ -5,22 +5,23 @@ import io.lumine.mythic.lib.skill.trigger.TriggerType;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.ConfigFile;
 import net.Indyuce.mmoitems.api.ReforgeOptions;
-import net.Indyuce.mmoitems.api.item.util.ConfigItem;
-import net.Indyuce.mmoitems.api.item.util.ConfigItems;
 import net.Indyuce.mmoitems.api.util.NumericStatFormula;
 import net.Indyuce.mmoitems.api.util.message.Message;
 import net.Indyuce.mmoitems.stat.GemUpgradeScaling;
 import net.Indyuce.mmoitems.stat.LuteAttackEffectStat.LuteAttackEffect;
 import net.Indyuce.mmoitems.util.LanguageFile;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -47,9 +48,9 @@ public class ConfigManager implements Reloadable {
     public ReforgeOptions revisionOptions, gemRevisionOptions, phatLootsOptions;
     public final List<String> opStats = new ArrayList<>();
     public String itemTypeLoreTag, gemStoneLoreTag, defaultTierName;
+    private final Map<Material, Integer> defaultPickaxePower = new HashMap<>();
 
     public ConfigManager() {
-        mkdir("layouts");
         mkdir("item");
         mkdir("language");
         mkdir("language/lore-formats");
@@ -105,17 +106,6 @@ public class ConfigManager implements Reloadable {
      * These two steps are necessary for smooth language updates
      */
     private void loadTranslations() {
-
-        // TODO items
-        ConfigFile items = new ConfigFile("/language", "items");
-        for (ConfigItem item : ConfigItems.values) {
-            if (!items.getConfig().contains(item.getId())) {
-                items.getConfig().createSection(item.getId());
-                item.setup(items.getConfig().getConfigurationSection(item.getId()));
-            }
-            item.update(items.getConfig());
-        }
-        items.save();
 
         // TODO messages
         final LanguageFile messages = new LanguageFile("messages");
@@ -213,14 +203,24 @@ public class ConfigManager implements Reloadable {
                             + exception.getMessage());
         }
 
-        final ConfigFile items = new ConfigFile("/language", "items");
-        for (ConfigItem item : ConfigItems.values)
-            item.update(items.getConfig().getConfigurationSection(item.getId()));
+        // Default pickaxe power for vanilla/MI items
+        for (String key : MMOItems.plugin.getConfig().getConfigurationSection("default-pickaxe-power").getKeys(false))
+            try {
+                Material mat = Material.valueOf(UtilityMethods.enumName(key));
+                int pickPower = MMOItems.plugin.getConfig().getInt("default-pickaxe-power." + key);
+                defaultPickaxePower.put(mat, pickPower);
+            } catch (Exception exception) {
+                MMOItems.plugin.getLogger().log(Level.WARNING, String.format("Could not load pickaxe power for '%s': %s", key, exception.getMessage()));
+            }
+    }
+
+    public int getDefaultPickaxePower(@NotNull ItemStack item) {
+        return defaultPickaxePower.getOrDefault(item.getType(), 0);
     }
 
     /**
      * @return Can this block material be broken by tool mechanics
-     * like 'Bouncing Crack'
+     *         like 'Bouncing Crack'
      */
     public boolean isBlacklisted(@NotNull Material material) {
         return MMOItems.plugin.getConfig().getStringList("block-blacklist").contains(material.name());
@@ -320,15 +320,10 @@ public class ConfigManager implements Reloadable {
         ABILITIES("language", "abilities"),
         ATTACK_EFFECTS("language", "attack-effects"),
         CRAFTING_STATIONS("language", "crafting-stations"),
-        ITEMS("language", "items"),
         LORE_FORMAT("language", "lore-format"),
         MESSAGES("language", "messages"),
         POTION_EFFECTS("language", "potion-effects"),
         STATS("language", "stats"),
-
-        // Station layouts
-        DEFAULT_LAYOUT("layouts", "default"),
-        EXPANDED_LAYOUT("layouts", "expanded"),
 
         // Default item config files -> /MMOItems/item
         ARMOR,
@@ -395,20 +390,24 @@ public class ConfigManager implements Reloadable {
         }
 
         public File getFile() {
-            return new File(MMOItems.plugin.getDataFolder() + (folderPath.equals("") ? "" : "/" + folderPath), fileName);
+            return new File(MMOItems.plugin.getDataFolder() + (folderPath.isEmpty() ? "" : '/' + folderPath), fileName);
         }
 
         public void checkFile() {
             File file = getFile();
-            if (!file.exists())
-                try {
-                    if (!new YamlConverter(file).convert()) {
-                        Files.copy(MMOItems.plugin.getResource("default/" + (folderPath.isEmpty() ? "" : folderPath + "/") + fileName), file.getAbsoluteFile().toPath());
-                    }
+            if (file.exists())
+                return;
 
-                } catch (IOException exception) {
-                    exception.printStackTrace();
+            try {
+                if (!new YamlConverter(file).convert()) {
+                    String resourcePath = (folderPath.isEmpty() ? "" : folderPath + '/') + fileName;
+                    InputStream localFile = MMOItems.plugin.getResource("default/" + resourcePath);
+                    Validate.notNull(localFile, String.format("Could not find default file %s", resourcePath));
+                    Files.copy(localFile, file.getAbsoluteFile().toPath());
                 }
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
+            }
         }
     }
 

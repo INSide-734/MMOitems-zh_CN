@@ -18,7 +18,7 @@ import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.event.item.UntargetedWeaponUseEvent;
 import net.Indyuce.mmoitems.api.interaction.UseItem;
 import net.Indyuce.mmoitems.api.interaction.WeaponAttackResult;
-import net.Indyuce.mmoitems.api.interaction.util.UntargetedDurabilityItem;
+import net.Indyuce.mmoitems.api.interaction.util.DurabilityItem;
 import net.Indyuce.mmoitems.api.interaction.weapon.untargeted.LegacyWeapon;
 import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.Indyuce.mmoitems.api.util.message.Message;
@@ -164,7 +164,7 @@ public class Weapon extends UseItem {
      * @param actionHand Slot being interacted with
      * @return Null if there are no attack detected
      * @implNote Since MI 6.7.3 this method handles custom durability, cooldown
-     * checks and player stat snapshots.
+     *         checks and player stat snapshots.
      */
     @Nullable
     public WeaponAttackResult handleUntargetedAttack(boolean rightClick, @NotNull EquipmentSlot actionHand) {
@@ -180,8 +180,8 @@ public class Weapon extends UseItem {
         if (!result.isSuccessful()) return WeaponAttackResult.NO_ATTACK;
 
         // Check for durability
-        UntargetedDurabilityItem durItem = new UntargetedDurabilityItem(getPlayer(), getNBTItem(), actionHand);
-        if (durItem.isBroken()) return WeaponAttackResult.DURABILITY;
+        DurabilityItem durItem = DurabilityItem.from(getPlayer(), getNBTItem(), actionHand.toBukkit());
+        if (durItem != null && durItem.isBroken()) return WeaponAttackResult.DURABILITY;
 
         // Apply weapon instantaneous costs
         PlayerMetadata stats = getPlayerData().getStats().newTemporary(actionHand);
@@ -201,7 +201,7 @@ public class Weapon extends UseItem {
         handler.whenCast(result, meta);
 
         // Apply durability loss
-        if (durItem.isValid()) durItem.decreaseDurability(1).inventoryUpdate();
+        if (durItem != null) durItem.decreaseDurability(1).updateInInventory();
         return WeaponAttackResult.SUCCESS;
     }
 
@@ -212,8 +212,8 @@ public class Weapon extends UseItem {
         if (!((LegacyWeapon) this).canAttack(rightClick, actionHand)) return WeaponAttackResult.NO_ATTACK;
 
         // Check for durability
-        UntargetedDurabilityItem durItem = new UntargetedDurabilityItem(getPlayer(), getNBTItem(), actionHand);
-        if (durItem.isBroken()) return WeaponAttackResult.DURABILITY;
+        DurabilityItem durItem = DurabilityItem.from(getPlayer(), getNBTItem(), actionHand.toBukkit());
+        if (durItem != null && durItem.isBroken()) return WeaponAttackResult.DURABILITY;
 
         // Apply weapon instantaneous costs
         PlayerMetadata stats = getPlayerData().getStats().newTemporary(actionHand);
@@ -234,7 +234,7 @@ public class Weapon extends UseItem {
         ((LegacyWeapon) this).applyAttackEffect(caster, actionHand);
 
         // Apply durability loss
-        if (durItem.isValid()) durItem.decreaseDurability(1).inventoryUpdate();
+        if (durItem != null) durItem.decreaseDurability(1).updateInInventory();
         return WeaponAttackResult.SUCCESS;
     }
 

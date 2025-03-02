@@ -25,5 +25,5 @@ public interface PlayerConsumable {
      *         vanilla eating animation, the default food and saturation modifier is
      *         applied so MMOItems needs to apply some offset to food/saturation.
      */
-    void onConsume(@NotNull VolatileMMOItem mmo, @NotNull Player player, boolean vanillaEating);
+    void onConsume(@NotNull VolatileMMOItem mmo, @NotNull Player player, boolean vanillaConsumption);
 }

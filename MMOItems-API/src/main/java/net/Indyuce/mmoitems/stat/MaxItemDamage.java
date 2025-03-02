@@ -1,17 +1,22 @@
 package net.Indyuce.mmoitems.stat;
 
 import io.lumine.mythic.lib.api.item.ItemTag;
+import io.lumine.mythic.lib.api.item.NBTItem;
 import io.lumine.mythic.lib.api.item.SupportedNBTTagValues;
+import io.lumine.mythic.lib.version.Sounds;
 import net.Indyuce.mmoitems.api.item.build.ItemStackBuilder;
 import net.Indyuce.mmoitems.api.item.mmoitem.ReadMMOItem;
+import net.Indyuce.mmoitems.api.player.RPGPlayer;
 import net.Indyuce.mmoitems.api.util.NumericStatFormula;
-import net.Indyuce.mmoitems.stat.annotation.HasCategory;
+import net.Indyuce.mmoitems.api.util.message.Message;
+import net.Indyuce.mmoitems.stat.annotation.VersionDependant;
 import net.Indyuce.mmoitems.stat.data.DoubleData;
 import net.Indyuce.mmoitems.stat.data.type.StatData;
 import net.Indyuce.mmoitems.stat.type.DoubleStat;
 import net.Indyuce.mmoitems.stat.type.GemStoneStat;
-import net.Indyuce.mmoitems.stat.annotation.VersionDependant;
+import net.Indyuce.mmoitems.stat.type.ItemRestriction;
 import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 @VersionDependant(version = {1, 20, 5})
-public class MaxItemDamage extends DoubleStat implements GemStoneStat {
+public class MaxItemDamage extends DoubleStat implements GemStoneStat, ItemRestriction {
     public MaxItemDamage() {
         super("MAX_ITEM_DAMAGE", Material.DAMAGED_ANVIL, "物品耐久（原版）", new String[]{"仅适用于 1.20.5+ 物品的最大耐久。使用原版耐久实现（比自定义耐久稳定得多）"}, new String[]{"all"});
     }
@@ -91,6 +96,25 @@ public class MaxItemDamage extends DoubleStat implements GemStoneStat {
         }
 
         return null;
+    }
 
+    @Override
+    public boolean canUse(RPGPlayer player, NBTItem item, boolean message) {
+        if (item.getItem().getItemMeta() instanceof Damageable) {
+            Damageable meta = ((Damageable) item.getItem().getItemMeta());
+            int maxDamage = meta.hasMaxDamage() ? meta.getMaxDamage() : item.getItem().getType().getMaxDurability();
+
+            // Some "non-damageable" item metas appear to be Damageable in recent versions
+            if (maxDamage == 0) return true;
+
+            if (meta.getDamage() >= maxDamage) {
+                if (message) {
+                    Message.ZERO_DURABILITY.format(ChatColor.RED).send(player.getPlayer());
+                    player.getPlayer().playSound(player.getPlayer().getLocation(), Sounds.ENTITY_VILLAGER_NO, 1, 1.5f);
+                }
+                return false;
+            }
+        }
+        return true;
     }
 }

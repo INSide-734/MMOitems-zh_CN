@@ -1,15 +1,15 @@
 package net.Indyuce.mmoitems.gui.edition.recipe.gui;
 
+import io.lumine.mythic.lib.gui.Navigator;
 import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
-import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMGRI_Smithing;
-import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMG_RecipeInterpreter;
 import net.Indyuce.mmoitems.gui.edition.recipe.button.RBA_DropGems;
 import net.Indyuce.mmoitems.gui.edition.recipe.button.RBA_InputOutput;
 import net.Indyuce.mmoitems.gui.edition.recipe.button.RBA_SmithingEnchantments;
 import net.Indyuce.mmoitems.gui.edition.recipe.button.RBA_SmithingUpgrades;
+import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMGRI_Smithing;
+import net.Indyuce.mmoitems.gui.edition.recipe.interpreter.RMG_RecipeInterpreter;
 import net.Indyuce.mmoitems.gui.edition.recipe.registry.RecipeRegistry;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,12 +34,12 @@ public class RMG_Smithing extends RecipeEditorGUI {
      * An editor for a Shaped Recipe. Because the recipe is loaded from the YML when this is created,
      * concurrent modifications of the same recipe are unsupported.
      *
-     * @param player Player editing the recipe ig
+     * @param navigator Current UI navigator
      * @param template Template of which a recipe is being edited
      * @param recipeName Name of this recipe
      */
-    public RMG_Smithing(@NotNull Player player, @NotNull MMOItemTemplate template, @NotNull String recipeName, @NotNull RecipeRegistry recipeRegistry) {
-        super(player, template, recipeName, recipeRegistry);
+    public RMG_Smithing(@NotNull Navigator navigator, @NotNull MMOItemTemplate template, @NotNull String recipeName, @NotNull RecipeRegistry recipeRegistry) {
+        super(navigator, template, recipeName, recipeRegistry);
 
         // Get section and build interpreter
         ConfigurationSection crafting = RecipeEditorGUI.getSection(getEditedSection(), "crafting");

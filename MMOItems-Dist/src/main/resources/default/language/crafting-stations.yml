@@ -34,8 +34,11 @@ condition:
     negative: '&c✖ 需要 #food# 饥饿值'
 ingredient:
   mmoitem:
-    positive: '&8✔ &7#amount# #level##item#'
+    positive: '&a✔ &7#amount# #level##item#'
     negative: '&c✖ &7#amount# #level##item#'
   vanilla:
-    positive: '&8✔ &7#amount# #item#'
+    positive: '&a✔ &7#amount# #item#'
+    negative: '&c✖ &7#amount# #item#'
+  mythic:
+    positive: '&a✔ &7#amount# #item#'
     negative: '&c✖ &7#amount# #item#'

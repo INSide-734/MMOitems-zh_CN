@@ -38,7 +38,7 @@ public class RMGRR_Shapeless implements RecipeRegistry {
     @NotNull @Override public ItemStack getDisplayListItem() { return displayListItem; }
 
     @Override public void openForPlayer(@NotNull EditionInventory inv, @NotNull String recipeName, Object... otherParams) {
-        new RMG_Shapeless(inv.getPlayer(), inv.getEdited(), recipeName, this).open(inv);
+        new RMG_Shapeless(inv.getNavigator(), inv.getEdited(), recipeName, this).open(inv);
     }
 
     @NotNull

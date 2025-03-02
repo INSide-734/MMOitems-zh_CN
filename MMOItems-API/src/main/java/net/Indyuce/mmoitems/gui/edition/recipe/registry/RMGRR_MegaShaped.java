@@ -35,7 +35,7 @@ public class RMGRR_MegaShaped implements RecipeRegistry {
     @NotNull @Override public ItemStack getDisplayListItem() { return displayListItem; }
 
     @Override public void openForPlayer(@NotNull EditionInventory inv, @NotNull String recipeName, Object... otherParams) {
-        new RMG_MegaShaped(inv.getPlayer(), inv.getEdited(), recipeName, this).open(inv);
+        new RMG_MegaShaped(inv.getNavigator(), inv.getEdited(), recipeName, this).open(inv);
     }
 
     @NotNull
